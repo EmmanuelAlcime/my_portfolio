@@ -1,0 +1,343 @@
+/* Services page – uses portfolio CSS variables from project.css / portfolio_pages.css */
+
+.services-container {
+  min-height: 100vh;
+  padding-top: 100px;
+  background: var(--secondary);
+}
+
+/* Hero */
+.services-hero {
+  padding: 2rem 0 3rem;
+  text-align: center;
+}
+
+.services-hero .hero-title {
+  font-size: 2.5rem;
+  color: var(--heading-color);
+  margin-bottom: 1rem;
+}
+
+.services-hero .hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-color);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Stats */
+.stats-section {
+  background: var(--card-bg);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.stat-card {
+  background: var(--secondary);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--primary);
+}
+
+.stat-icon {
+  font-size: 1.75rem;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* Section header */
+.services-container .section-header .section-title {
+  color: var(--heading-color);
+}
+
+.services-container .section-subtitle {
+  color: var(--text-color);
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Main service cards */
+.service-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.75rem;
+  height: 100%;
+  border-top: 4px solid var(--primary);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.service-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-4px);
+}
+
+.service-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.service-icon i {
+  font-size: 1.5rem;
+  color: var(--primary-contrast);
+}
+
+.service-title {
+  font-size: 1.25rem;
+  color: var(--heading-color);
+  margin-bottom: 0.5rem;
+}
+
+.service-description {
+  font-size: 0.95rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.service-highlights {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.service-highlights li {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  padding: 0.35rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.service-highlights li i {
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-size: 0.75rem;
+}
+
+.service-expanded {
+  padding-top: 1rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.service-expanded h5 {
+  color: var(--heading-color);
+  font-size: 1rem;
+}
+
+.expanded-details {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.expanded-details li {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  padding: 0.3rem 0 0.3rem 1.25rem;
+  position: relative;
+}
+
+.expanded-details li i {
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-size: 0.7rem;
+}
+
+.tech-label {
+  font-size: 0.85rem;
+  color: var(--heading-color);
+  margin-bottom: 0.5rem;
+}
+
+.tech-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tech-badge {
+  display: inline-block;
+  background: rgba(14, 66, 161, 0.15);
+  color: var(--primary);
+  padding: 0.35rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  border: 1px solid var(--primary);
+}
+
+/* Additional services section */
+.additional-services {
+  background: var(--card-bg) !important;
+  border-top: 1px solid var(--card-border);
+}
+
+.additional-service-card {
+  background: var(--secondary);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 100%;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.additional-service-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-4px);
+}
+
+.add-service-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: rgba(14, 66, 161, 0.15);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.add-service-icon i {
+  font-size: 1.25rem;
+}
+
+.add-service-title {
+  font-size: 1.1rem;
+  color: var(--heading-color);
+  margin-bottom: 0.5rem;
+}
+
+.add-service-description {
+  font-size: 0.95rem;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.add-service-details {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.tech-badges-small {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tech-badge-small {
+  font-size: 0.75rem;
+  color: var(--text-color);
+  background: var(--card-bg);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+}
+
+/* Process section */
+.process-section {
+  background: var(--secondary);
+}
+
+.process-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  transition: border-color 0.2s ease;
+}
+
+.process-card:hover {
+  border-color: var(--primary);
+}
+
+.process-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.process-title {
+  font-size: 1.1rem;
+  color: var(--heading-color);
+  margin-bottom: 0.35rem;
+}
+
+.process-description {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* CTA */
+.services-cta {
+  background: var(--primary) !important;
+  color: var(--primary-contrast) !important;
+}
+
+.services-cta .cta-title {
+  color: var(--primary-contrast);
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.services-cta .cta-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.05rem;
+}
+
+.services-cta .btn-light {
+  border-color: var(--primary-contrast);
+  color: var(--primary);
+}
+
+.services-cta .btn-light:hover {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--primary-contrast);
+}
+
+@media (max-width: 768px) {
+  .services-hero .hero-title {
+    font-size: 2rem;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+}

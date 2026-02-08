@@ -1,0 +1,23 @@
+/* Icon styling */
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  fill: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  color: var(--text-color) !important;
+  text-decoration: none !important;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+  border: none;
+  background: transparent;
+}
+
+.theme-toggle:hover {
+  color: var(--primary) !important;
+}
