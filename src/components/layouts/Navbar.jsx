@@ -5,12 +5,26 @@ import '@/styles/navbar.css'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [isSticky, setIsSticky] = useState(false)
   const location = useLocation()
   const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     setIsOpen(false)
   }, [location.pathname])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setIsSticky(true)
+      } else {
+        setIsSticky(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const isActive = (path) => {
     return location.pathname === path ? 'active' : ''
@@ -21,7 +35,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className={`header-navbar navbar navbar-expand-lg bg-body-tertiary ${isOpen ? 'show' : ''}`}>
+    <nav className={`header-navbar navbar navbar-expand-lg bg-body-tertiary ${isOpen ? 'show' : ''} ${isSticky ? 'sticky' : ''}`}>
       <div className="container">
         <Link to="/my_portfolio/" className="navbar-brand d-flex justify-content-start">
           <svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 100 100">

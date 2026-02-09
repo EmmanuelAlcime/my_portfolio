@@ -174,7 +174,7 @@ const Home = () => {
       </section>
 
       {/* My Contributions Section */}
-      <section className="home-section contributions-section">
+      <section className="home-section contributions-section" style={contributionsStyle}>
         <div className="container py-5">
           <h2 className="home-section-heading">My <span className="theme-name">Contributions</span></h2>
           
@@ -365,7 +365,10 @@ const Home = () => {
 
 const carouselStyle = {
   backgroundColor: 'var(--card-bg)',
+}
 
+const contributionsStyle = {
+  background: 'linear-gradient(135deg, rgba(60, 60, 60, 0.18) 0%, rgba(110, 110, 110, 0.12) 50%, rgba(80, 80, 80, 0.16) 100%)',
 }
 
 
