@@ -268,10 +268,16 @@ a, p {
   }
 
   .hero-content {
-    top: -8%;
+    top: -160px;
     left: 50%;
     transform: translate(-50%, 50%);
    }
+}
+
+@media screen and (min-width: 653px) and  (max-width: 768px){
+    .hero-content {
+        top: -100px;
+    }
 }
 
 /* Clipping wrapper so the particles canvas cannot escape */
