@@ -151,7 +151,7 @@ const Home = () => {
                   rel="noopener noreferrer"
                   className="recent-project-thumb"
                 >
-                  <img src={proj.image} alt={proj.title} className="recent-project-thumb-img" />
+                  <img src={proj.image} alt={proj.title} className="recent-project-thumb-img" loading="lazy" />
                   <span className="recent-project-thumb-title">{proj.title}</span>
                 </a>
               ))}

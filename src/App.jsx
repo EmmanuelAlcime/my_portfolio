@@ -4,6 +4,7 @@ import '@/styles/project.css'
 import '@/styles/portfolio_pages.css'
 import Navbar from '@/components/layouts/Navbar'
 import Footer from '@/components/layouts/Footer'
+import ScrollProgress from '@/components/ScrollProgress'
 
 function App() {
   const location = useLocation()
@@ -14,6 +15,7 @@ function App() {
 
   return (
     <>
+       <ScrollProgress />
        <Navbar />
        <Outlet />
        <Footer/>

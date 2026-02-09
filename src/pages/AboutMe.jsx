@@ -1,4 +1,5 @@
 import React from 'react'
+import SkillBar from '@/components/SkillBar'
 
 const AboutMe = () => {
   return (
@@ -21,31 +22,19 @@ const AboutMe = () => {
           </div>
           <div className="col-lg-6">
             <div className="about-highlight">
-              <h3>Key Expertise</h3>
-              <div className="expertise-grid">
-                <div className="expertise-item">
-                  <h5>Frontend</h5>
-                  <p>React, JavaScript, HTML5, CSS3, Responsive Design</p>
-                </div>
-                <div className="expertise-item">
-                  <h5>Backend</h5>
-                  <p>PHP, Laravel, RESTful APIs, Database Design</p>
-                </div>
-                <div className="expertise-item">
-                  <h5>Mobile</h5>
-                  <p>Kotlin, Android SDK, Play Store Publications</p>
-                </div>
-                <div className="expertise-item">
-                  <h5>DevOps</h5>
-                  <p>Apache2, Git, CI/CD, Performance Optimization</p>
-                </div>
-              </div>
+              <h3>Technical Proficiency</h3>
+              <SkillBar skill="React & JavaScript" level={90} icon="fab fa-react" />
+              <SkillBar skill="PHP & Laravel" level={95} icon="fab fa-php" />
+              <SkillBar skill="HTML5 & CSS3" level={92} icon="fab fa-html5" />
+              <SkillBar skill="Android Development" level={85} icon="fab fa-android" />
+              <SkillBar skill="MySQL & PostgreSQL" level={88} icon="fas fa-database" />
+              <SkillBar skill="Git & Version Control" level={90} icon="fab fa-git-alt" />
             </div>
           </div>
         </div>
 
         <div className="row mt-5">
-          <div className="col-12">
+          <div className="col-12 pl-5">
             <h2 className="section-title">Professional <span className="theme-name">Journey</span></h2>
             <div className="timeline">
               <div className="timeline-item">

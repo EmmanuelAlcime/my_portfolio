@@ -1,0 +1,112 @@
+/* Skeleton Loading Styles */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(14, 66, 161, 0.08) 0%,
+    rgba(14, 66, 161, 0.15) 50%,
+    rgba(14, 66, 161, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Project Card Skeleton */
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  border-radius: 12px 12px 0 0;
+}
+
+.skeleton-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.skeleton-title {
+  width: 70%;
+  height: 28px;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-company {
+  width: 40%;
+  height: 20px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-text {
+  width: 100%;
+  height: 16px;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.skeleton-tag {
+  width: 80px;
+  height: 28px;
+  border-radius: 20px;
+}
+
+/* Skill Bar Skeleton */
+.skill-bar-skeleton {
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-skill-header {
+  width: 150px;
+  height: 20px;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-skill-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 10px;
+}
+
+/* Content Skeleton */
+.content-skeleton {
+  padding: 2rem 0;
+}
+
+.skeleton-heading {
+  width: 300px;
+  height: 36px;
+  margin-bottom: 1.5rem;
+}
+
+/* Dark mode adjustments */
+[data-bs-theme="dark"] .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+}

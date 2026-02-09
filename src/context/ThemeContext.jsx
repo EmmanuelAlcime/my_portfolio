@@ -12,14 +12,26 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     const root = document.documentElement
+
+    // Add transition class before changing theme
+    root.classList.add('theme-transitioning')
+
     if (theme === 'light') {
       root.setAttribute('data-theme', 'light')
+      root.setAttribute('data-bs-theme', 'light')
     } else {
       root.removeAttribute('data-theme')
+      root.setAttribute('data-bs-theme', 'dark')
     }
+
     try {
       localStorage.setItem(STORAGE_KEY, theme)
     } catch (_) {}
+
+    // Remove transition class after animation completes
+    setTimeout(() => {
+      root.classList.remove('theme-transitioning')
+    }, 300)
   }, [theme])
 
   const setTheme = (next) => {

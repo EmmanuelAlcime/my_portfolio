@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import aliv_business_image from '@/assets/aliv_business_website.png'
 import inspire_her_image from '@/assets/inspire_her_website.png'
 import cash_n_go_image from '@/assets/cash_n_go_website.png'
 import lacouperetrouvailles_image from '@/assets/lacouperetrouvailles_website.png'
 import baf_financial_services_image from '@/assets/baf_website.png'
+
 const Projects = () => {
+  const [selectedFilter, setSelectedFilter] = useState('All')
+
   const projects = [
     {
       id: 1,
@@ -14,6 +17,7 @@ const Projects = () => {
       link: "https://alivbusiness.com/",
       image: aliv_business_image,
       technologies: ["React", "PHP", "Laravel", "MySQL"],
+      category: "Web Development",
       icon: "fas fa-mobile-alt",
       highlights: [
         "Built responsive business portal",
@@ -28,7 +32,8 @@ const Projects = () => {
       description: "Custom event management platform with integrated sign-up forms and sponsor management. Designed to facilitate networking and sponsor engagement.",
       link: "https://iherbahamas.com/",
       image: inspire_her_image,
-      technologies: ["WordPress", "Elementor", "PHP", "Custom Plugins"],
+      technologies: ["HTML", "Bootstrap 5","CSS3", "PHP", "Javascript"],
+      category: "Bootstrap 5",
       icon: "fas fa-microphone",
       highlights: [
         "Custom event management system",
@@ -44,6 +49,7 @@ const Projects = () => {
       link: "https://cashngobahamas.com/",
       image: cash_n_go_image,
       technologies: ["PHP", "Laravel", "PostgreSQL", "RESTful API"],
+      category: "Web Development",
       icon: "fas fa-credit-card",
       highlights: [
         "Secure payment processing",
@@ -59,6 +65,7 @@ const Projects = () => {
       link: "https://lacouperetrouvailles.org/",
       image: lacouperetrouvailles_image,
       technologies: ["React", "Laravel", "MySQL", "Payment Integration"],
+      category: "Web Development",
       icon: "fas fa-handshake",
       highlights: [
         "Website for a non-profit organization",
@@ -73,6 +80,7 @@ const Projects = () => {
       link: "https://bahamas.mybafsolutions.com/",
       image: baf_financial_services_image,
       technologies: ["HTML5", "CSS3", "JavaScript", "PHP", "MySQL"],
+      category: "Web Development",
       icon: "fas fa-money-bill",
       highlights: [
         "Built responsive financial services portal",
@@ -108,6 +116,16 @@ const Projects = () => {
     }
   ]
 
+  const categories = ['All', 'Web Development', 'WordPress']
+  const allTechnologies = [...new Set(projects.flatMap(p => p.technologies))]
+
+  const filteredProjects = selectedFilter === 'All'
+    ? projects
+    : projects.filter(project =>
+        project.category === selectedFilter ||
+        project.technologies.includes(selectedFilter)
+      )
+
   return (
     <div className="projects-container">
       <div className="container py-5">
@@ -115,20 +133,46 @@ const Projects = () => {
         <div className="projects-hero mb-5">
           <h1 className="projects-title">My Projects</h1>
           <p className="projects-subtitle">
-            Here's a selection of projects I've built that showcase my expertise in web development, 
+            Here's a selection of projects I've built that showcase my expertise in web development,
             mobile apps, and enterprise solutions.
           </p>
         </div>
 
+        {/* Filter Buttons */}
+        <div className="project-filters mb-4">
+          <div className="filter-buttons">
+            {categories.map((category) => (
+              <button
+                key={category}
+                className={`filter-btn ${selectedFilter === category ? 'active' : ''}`}
+                onClick={() => setSelectedFilter(category)}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+          <div className="filter-tech-tags">
+            {allTechnologies.slice(0, 8).map((tech) => (
+              <button
+                key={tech}
+                className={`filter-tech-tag ${selectedFilter === tech ? 'active' : ''}`}
+                onClick={() => setSelectedFilter(tech)}
+              >
+                {tech}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Featured Projects */}
         <div className="mb-5">
-          <h2 className="section-title mb-4">Client Projects</h2>
+          <h2 className="section-title mb-4">Client Projects ({filteredProjects.length})</h2>
           <div className="row">
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <div key={project.id} className="col-lg-6 mb-4">
                 <div className="project-card">
                   <a href={project.link} target="_blank" rel="noopener noreferrer" className="project-card-image-link">
-                    <img src={project.image} alt={project.title} className="project-card-image" />
+                    <img src={project.image} alt={project.title} className="project-card-image" loading="lazy" />
                   </a>
                   <div className="project-content">
                     <div className="project-icon">
