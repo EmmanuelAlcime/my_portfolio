@@ -52,7 +52,7 @@ const AboutMe = () => {
                 <div className="timeline-marker"></div>
                 <div className="timeline-content">
                   <h4>Senior Software Developer</h4>
-                  <p className="timeline-date">Bahamas Local | August 2025 - Present</p>
+                  <p className="timeline-date">Bahamas Local | August 2025 - Dec 2026</p>
                   <p>Leading development initiatives with React and Laravel. Architecting RESTful APIs, optimizing application performance by 40% through CI/CD pipelines, and mentoring junior developers.</p>
                 </div>
               </div>

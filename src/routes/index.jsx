@@ -9,7 +9,7 @@ import ResumePage from '@/pages/Resume'
 import ServicesPage from '@/pages/Services'
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/my_portfolio/',
     element: <App />,
     errorElement: <NotFoundPage />,
     children: [
@@ -18,23 +18,23 @@ export const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: 'about',
+        path: '/my_portfolio/about',
         element: <AboutPage />,
       },
       {
-        path: 'contact',
+        path: '/my_portfolio/contact',
         element: <ContactPage/>
       },
       {
-        path: 'projects',
+        path: '/my_portfolio/projects',
         element: <ProjectPage/>
       },
       {
-        path: 'resume',
+        path: '/my_portfolio/resume',
         element: <ResumePage/>
       },
       {
-        path: 'services',
+        path: '/my_portfolio/services',
         element: <ServicesPage/>
       }
     ],

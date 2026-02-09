@@ -23,13 +23,13 @@ const NotFound = () => {
         <div className="notfound-actions">
           <button 
             className="btn btn-outline-success btn-lg"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/my_portfolio/')}
           >
             <i className="fas fa-home"></i> Back to Home
           </button>
           <button 
             className="btn btn-outline-secondary btn-lg ms-2"
-            onClick={() => navigate('/projects')}
+            onClick={() => navigate('/my_portfolio/projects')}
           >
             <i className="fas fa-folder-open"></i> View Projects
           </button>
@@ -38,37 +38,37 @@ const NotFound = () => {
         <div className="notfound-suggestions">
           <h3>What would you like to do?</h3>
           <div className="suggestion-links">
-            <a href="/" className="suggestion-item">
+            <a href="/my_portfolio/" className="suggestion-item">
               <span className="suggestion-icon">
                 <i className="fas fa-house-user"></i>
               </span>
               <span className="suggestion-text">Home</span>
             </a>
-            <a href="/about" className="suggestion-item">
+            <a href="/my_portfolio/about" className="suggestion-item">
               <span className="suggestion-icon">
                 <i className="fas fa-user-circle"></i>
               </span>
               <span className="suggestion-text">About Me</span>
             </a>
-            <a href="/projects" className="suggestion-item">
+            <a href="/my_portfolio/projects" className="suggestion-item">
               <span className="suggestion-icon">
                 <i className="fas fa-briefcase"></i>
               </span>
               <span className="suggestion-text">Projects</span>
             </a>
-            <a href="/services" className="suggestion-item">
+            <a href="/my_portfolio/services" className="suggestion-item">
               <span className="suggestion-icon">
                 <i className="fas fa-concierge-bell"></i>
               </span>
               <span className="suggestion-text">Services</span>
             </a>
-            <a href="/resume" className="suggestion-item">
+            <a href="/my_portfolio/resume" className="suggestion-item">
               <span className="suggestion-icon">
                 <i className="fas fa-file-pdf"></i>
               </span>
               <span className="suggestion-text">Resume</span>
             </a>
-            <a href="/contact" className="suggestion-item">
+            <a href="/my_portfolio/contact" className="suggestion-item">
               <span className="suggestion-icon">
                 <i className="fas fa-envelope"></i>
               </span>

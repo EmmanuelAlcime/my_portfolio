@@ -129,7 +129,7 @@ const Home = () => {
       </div>
 
       {/* Recent Projects – horizontal thumbnail slider */}
-      <section className="home-section recent-projects-section">
+      <section className="home-section recent-projects-section" style={carouselStyle}>
         <div className="container py-5">
           <h2 className="home-section-heading">Recent <span className="theme-name">Projects</span>  </h2>
           <div className="recent-projects-slider-wrap">
@@ -156,6 +156,7 @@ const Home = () => {
                 </a>
               ))}
             </div>
+           
             <button
               type="button"
               className="recent-projects-arrow recent-projects-arrow-right"
@@ -167,7 +168,143 @@ const Home = () => {
             </button>
           </div>
           <div className="text-center mt-4">
-            <Link to="/projects" className="btn btn-outline-primary">View All Projects</Link>
+            <Link to="/my_portfolio/projects" className="btn btn-outline-primary">View All Projects</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* My Contributions Section */}
+      <section className="home-section contributions-section">
+        <div className="container py-5">
+          <h2 className="home-section-heading">My <span className="theme-name">Contributions</span></h2>
+          
+          <div className="contributions-grid">
+            {/* Government Projects */}
+            <div className="contributions-category">
+              <div className="category-header">
+                <div className="category-icon">
+                  <i className="fas fa-building"></i>
+                </div>
+                <h3>Government Digital Transformation Unit</h3>
+                <p className="category-subtitle">Part of the DTU Dev Team</p>
+              </div>
+              
+              <div className="contributions-cards">
+                <div className="contribution-card">
+                  <div className="card-header">
+                    <i className="fas fa-certificate"></i>
+                    <h4>CertifiedPros</h4>
+                  </div>
+                  <p className="card-description">
+                    Professional certification and credential verification platform for government professionals. Built secure authentication and role-based access systems.
+                  </p>
+                  <div className="contribution-tags">
+                    <span className="contrib-tag">React</span>
+                    <span className="contrib-tag">Laravel</span>
+                    <span className="contrib-tag">InertiaJS</span>       
+                  </div>
+                </div>
+
+                <div className="contribution-card">
+                  <div className="card-header">
+                    <i className="fas fa-book"></i>
+                    <h4>Policy Registry</h4>
+                  </div>
+                  <p className="card-description">
+                    Comprehensive government insurance policies registration and management system. Implemented advanced search, versioning, and approval workflows.
+                  </p>
+                  <div className="contribution-tags">
+                    <span className="contrib-tag">HTML5</span>
+                    <span className="contrib-tag">MySQL</span>
+                    <span className="contrib-tag">CSS3</span>
+                    <span className="contrib-tag">JavaScript</span>
+                    <span className="contrib-tag">PHP</span>
+                  </div>
+                </div>
+
+                <div className="contribution-card">
+                  <div className="card-header">
+                    <i className="fas fa-landmark"></i>
+                    <h4>B.T.A.G Website</h4>
+                  </div>
+                  <p className="card-description">
+                    Government agency website with public information portal. Developed responsive design with government compliance standards and accessibility features.
+                  </p>
+                  <div className="contribution-tags">
+                    <span className="contrib-tag">React</span>
+                    <span className="contrib-tag">Laravel</span>
+                    {/* <span className="contrib-tag">Accessibility</span> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Private Sector Updates */}
+            <div className="contributions-category">
+              <div className="category-header">
+                <div className="category-icon">
+                  <i className="fas fa-rocket"></i>
+                </div>
+                <h3>Private Sector Updates & Improvements</h3>
+                <p className="category-subtitle">Product Development & Enhancement</p>
+              </div>
+              
+              <div className="contributions-cards">
+                <div className="contribution-card">
+                  <div className="card-header">
+                    <i className="fas fa-mobile-alt"></i>
+                    <h4>Be aliv Website Updates</h4>
+                  </div>
+                  <p className="card-description">
+                  Aliv Mobile's main website.
+                  </p>
+                  <div className="contribution-tags">
+                    <span className="contrib-tag">WordPress</span>
+                    {/* <span className="contrib-tag">Performance</span>
+                    <span className="contrib-tag">UX/UI</span> */}
+                  </div>
+                </div>
+
+                <div className="contribution-card">
+                  <div className="card-header">
+                    <i className="fas fa-sync-alt"></i>
+                    <h4>Rev.bs Website Updates</h4>
+                  </div>
+                  <p className="card-description">
+                  Cable Bahamas main website.
+                  </p>
+                  <div className="contribution-tags">
+                    <span className="contrib-tag">WordPress</span>
+                    {/* <span className="contrib-tag">API</span>
+                    <span className="contrib-tag">DevOps</span> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="contributions-summary">
+            <div className="summary-card">
+              <div className="summary-icon">
+                <i className="fas fa-code-branch"></i>
+              </div>
+              <h5>Collaborative Development</h5>
+              <p>Worked with cross-functional teams on mission-critical government and enterprise projects</p>
+            </div>
+            <div className="summary-card">
+              <div className="summary-icon">
+                <i className="fas fa-tasks"></i>
+              </div>
+              <h5>Quality Assurance</h5>
+              <p>Implemented rigorous testing, code reviews, and deployment pipelines for production systems</p>
+            </div>
+            <div className="summary-card">
+              <div className="summary-icon">
+                <i className="fas fa-lightbulb"></i>
+              </div>
+              <h5>Continuous Improvement</h5>
+              <p>Contributed innovative solutions and technical improvements to existing platforms</p>
+            </div>
           </div>
         </div>
       </section>
@@ -217,12 +354,19 @@ const Home = () => {
             </div>
           </div>
           <p className="text-center mt-3">
-            <Link to="/contact">Go to full Contact page</Link> for more options.
+            <Link to="/my_portfolio/contact">Go to full Contact page</Link> for more options.
           </p>
         </div>
       </section>
     </>
   )
 }
+
+
+const carouselStyle = {
+  backgroundColor: 'var(--card-bg)',
+
+}
+
 
 export default Home

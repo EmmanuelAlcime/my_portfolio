@@ -26,11 +26,11 @@ const Footer = () => {
           <div className="col-lg-2 col-md-6 mb-4 mb-lg-0">
             <h5 className="footer-title"><i className="fas fa-link"></i> Quick Links</h5>
             <ul className="footer-links">
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/about">About Me</Link></li>
-              <li><Link to="/projects">Projects</Link></li>
-              <li><Link to="/resume">Resume</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/my_portfolio/">Home</Link></li>
+              <li><Link to="/my_portfolio/about">About Me</Link></li>
+              <li><Link to="/my_portfolio/projects">Projects</Link></li>
+              <li><Link to="/my_portfolio/resume">Resume</Link></li>
+              <li><Link to="/my_portfolio/contact">Contact</Link></li>
             </ul>
           </div>
 
@@ -38,10 +38,10 @@ const Footer = () => {
           <div className="col-lg-2 col-md-6 mb-4 mb-lg-0">
             <h5 className="footer-title"><i className="fas fa-briefcase"></i> Services</h5>
             <ul className="footer-links">
-              <li><Link to="/services#web-development">Web Development</Link></li>
-              <li><Link to="/services#mobile-development">Mobile Apps</Link></li>
-              <li><Link to="/services#wordpress-solutions">WordPress Solutions</Link></li>
-              <li><Link to="/services#consulting">Consultation</Link></li>
+              <li><Link to="/my_portfolio/services#web-development">Web Development</Link></li>
+              <li><Link to="/my_portfolio/services#mobile-development">Mobile Apps</Link></li>
+              <li><Link to="/my_portfolio/services#wordpress-solutions">WordPress Solutions</Link></li>
+              <li><Link to="/my_portfolio/services#consulting">Consultation</Link></li>
             </ul>
           </div>
 
