@@ -1,16 +1,101 @@
-# React + Vite
+# My Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern personal portfolio website showcasing my work, skills, and experience as a web developer.
 
-Currently, two official plugins are available:
+## 🚀 Built With
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** - Modern UI library
+- **Vite** - Fast build tool and dev server with HMR
+- **React Router** - Client-side routing
+- **Bootstrap 5** - Responsive styling framework
+- **React Particles** - Interactive particle animations
+- **GitHub Pages** - Hosting and deployment
 
-## React Compiler
+## 📄 Pages
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Home** - Introduction with contributions section
+- **About Me** - Background and personal information
+- **Projects** - Portfolio of completed work including:
+  - Aliv Business Website
+  - BAF Website
+  - Cash N Go Website
+  - Inspire Her Website
+  - La Coupe Retrouvailles Website
+- **Services** - Services offered
+- **Resume** - Professional experience and qualifications
+- **Contact Me** - Get in touch form
 
-## Expanding the ESLint configuration
+## 🛠️ Development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- Node.js (latest LTS version recommended)
+- npm or yarn
+
+### Installation
+
+```bash
+npm install
+```
+
+### Run Development Server
+
+```bash
+npm run dev
+```
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+### Lint Code
+
+```bash
+npm run lint
+```
+
+## 🌐 Deployment
+
+This site is automatically deployed to GitHub Pages.
+
+```bash
+npm run deploy
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── assets/         # Images and static files
+├── components/     # Reusable React components
+├── context/        # React context providers (theme, etc.)
+├── hooks/          # Custom React hooks
+├── pages/          # Page components
+├── routes/         # Route definitions
+├── services/       # API and external services
+├── styles/         # CSS stylesheets
+└── utils/          # Utility functions
+```
+
+## 📦 Key Dependencies
+
+- `react` & `react-dom` - UI framework
+- `react-router-dom` - Navigation
+- `bootstrap` - Styling
+- `react-particles` & `tsparticles-slim` - Particle effects
+
+## 📝 License
+
+This project is private and not open for public use.
+
+## 🔗 Live Site
+
+Visit the live portfolio at: [https://emmanuelalcime.github.io/my_portfolio](https://emmanuelalcime.github.io/my_portfolio)
