@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Page Redirect</title>
+    <script>
+        // Capture the path that wasn't found
+        const path = window.location.pathname;
+        const segments = path.split('/').filter(Boolean);
+
+        // Remove the repo name from the path
+        // For https://emmanuelalcime.github.io/my_portfolio/about
+        // We want to capture /about
+        const baseUrl = '/my_portfolio';
+        const cleanPath = path.startsWith(baseUrl)
+            ? path.slice(baseUrl.length)
+            : path;
+
+        sessionStorage.setItem('redirect', cleanPath || '/');
+        window.location.href = baseUrl + '/index.html';
+    </script>
+</head>
+<body>
+</body>
+</html>

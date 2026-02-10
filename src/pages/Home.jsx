@@ -78,22 +78,13 @@ const Home = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setFormStatus({ submitted: false, loading: true, error: null })
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-      if (response.ok) {
-        setFormStatus({ submitted: true, loading: false, error: null })
-        setFormData({ name: '', email: '', subject: '', message: '' })
-        setTimeout(() => setFormStatus(prev => ({ ...prev, submitted: false })), 5000)
-      } else {
-        throw new Error('Failed to send message')
-      }
-    } catch {
-      setFormStatus({ submitted: false, loading: false, error: 'Failed to send. Please try again or contact me directly.' })
-    }
+
+    // Mock sending message with 1.5 second delay
+    setTimeout(() => {
+      setFormStatus({ submitted: true, loading: false, error: null })
+      setFormData({ name: '', email: '', subject: '', message: '' })
+      setTimeout(() => setFormStatus(prev => ({ ...prev, submitted: false })), 5000)
+    }, 1500)
   }
 
   return (

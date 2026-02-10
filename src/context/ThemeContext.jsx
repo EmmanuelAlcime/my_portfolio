@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
-const ThemeContext = createContext({ theme: 'dark', setTheme: () => {} })
+const ThemeContext = createContext({ theme: 'light', setTheme: () => {} })
 
 const STORAGE_KEY = 'portfolio-theme'
 
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
-    if (typeof window === 'undefined') return 'dark'
-    return localStorage.getItem(STORAGE_KEY) || 'dark'
+    if (typeof window === 'undefined') return 'light'
+    return localStorage.getItem(STORAGE_KEY) || 'light'
   })
 
   useEffect(() => {
@@ -16,12 +16,12 @@ export function ThemeProvider({ children }) {
     // Add transition class before changing theme
     root.classList.add('theme-transitioning')
 
-    if (theme === 'light') {
-      root.setAttribute('data-theme', 'light')
-      root.setAttribute('data-bs-theme', 'light')
+    if (theme === 'dark') {
+      root.setAttribute('data-theme', 'dark')
+      root.setAttribute('data-bs-theme', 'dark')
     } else {
       root.removeAttribute('data-theme')
-      root.setAttribute('data-bs-theme', 'dark')
+      root.setAttribute('data-bs-theme', 'light')
     }
 
     // Update meta theme-color for mobile status bar
@@ -45,7 +45,7 @@ export function ThemeProvider({ children }) {
   }
 
   const toggleTheme = () => {
-    setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'))
+    setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'))
   }
 
   return (

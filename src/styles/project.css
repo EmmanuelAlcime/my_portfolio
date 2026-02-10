@@ -1,23 +1,25 @@
 :root {
     --primary: #0e42a1;
     --primary-contrast: #ffffff;
-    --secondary: #050505;
-    --text-color: #7d789a;
-    --text-black: #000000;
-    --heading-color: #ffffff;
-    --card-bg: rgba(14, 66, 161, 0.05);
-    --card-border: rgba(14, 66, 161, 0.1);
-    --card-bg-active: rgba(14, 66, 161, 0.1);
-}
-
-[data-theme="light"] {
     --secondary: #f0f2f5;
     --text-color: #4a4a68;
+    --text-black: #000000;
     --heading-color: #1a1a2e;
-    --primary-contrast: #ffffff;
     --card-bg: rgba(14, 66, 161, 0.06);
     --card-border: rgba(14, 66, 161, 0.15);
     --card-bg-active: rgba(14, 66, 161, 0.12);
+    --hero-gradient: hsl(0 0% 95% / .75);
+}
+
+[data-theme="dark"] {
+    --secondary: #050505;
+    --text-color: #7d789a;
+    --heading-color: #ffffff;
+    --primary-contrast: #ffffff;
+    --card-bg: rgba(14, 66, 161, 0.05);
+    --card-border: rgba(14, 66, 161, 0.1);
+    --card-bg-active: rgba(14, 66, 161, 0.1);
+    --hero-gradient: hsl(0 0% 100% / .75);
 }
 
 html {
@@ -259,7 +261,7 @@ a, p {
     height: 100vh;
     max-height: 700px;
     overflow: hidden;
-    background-image: conic-gradient(hsl(0 0% 100% / .75) 0 0);
+    background-image: conic-gradient(var(--hero-gradient), var(--hero-gradient));
     background-size: cover;
     /*isolation: isolate;*/
     z-index: 100;
