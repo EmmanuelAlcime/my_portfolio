@@ -35,38 +35,40 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-h1, h2, h3,h4,h5,h6{
+h1, h2, h3, h4, h5, h6 {
     font-family: 'Lilita One', cursive;
 }
-h1{
-    .theme-name{
-    color: var(--primary)
+
+h1 {
+    .theme-name {
+        color: var(--primary)
     }
 }
 
-h2{
-    .theme-name{
-    color: var(--primary)
+h2 {
+    .theme-name {
+        color: var(--primary)
     }
 }
 
-h3{
-    .theme-name{
-    color: var(--primary)
+h3 {
+    .theme-name {
+        color: var(--primary)
     }
 }
 
 a, p {
     font-family: 'Roboto', sans-serif !important;
+    user-select: none;
 }
 
 .header-navbar {
     width: 100%;
     background: none !important;
     position: absolute;
-    top:0;
+    top: 0;
     z-index: 999;
-    
+
 }
 
 .header-navbar > .container {
@@ -75,7 +77,7 @@ a, p {
 
 @media screen and (min-width: 1000px ) {
 
-    .navbar-brand{
+    .navbar-brand {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -84,25 +86,25 @@ a, p {
 
 @media screen and (max-width: 768px ) {
 
-    .navbar-brand{
+    .navbar-brand {
         width: 50%;
     }
 }
 
-.navbar-brand > svg{
+.navbar-brand > svg {
     width: 10%;
     fill: var(--primary);
 }
 
-.navbar-brand .name_line--first{
-   margin-left: 2%;
-   color: var(--text-color);
+.navbar-brand .name_line--first {
+    margin-left: 2%;
+    color: var(--text-color);
 }
 
-.navbar-brand .name_line--last{
-   margin-left: 2%;
-   color: var(--primary);
-   font-weight: bold;
+.navbar-brand .name_line--last {
+    margin-left: 2%;
+    color: var(--primary);
+    font-weight: bold;
 }
 
 .nav-link {
@@ -120,11 +122,11 @@ a, p {
     margin-right: 0.25rem;
 }
 
-.nav-link.active{
-    color:var(--primary) !important;
+.nav-link.active {
+    color: var(--primary) !important;
 }
 
-.nav-link:hover{
+.nav-link:hover {
     transition: color .4s ease-in-out;
     color: var(--primary) !important;
 }
@@ -140,16 +142,16 @@ a, p {
     font-size: 1rem;
 }
 
-.contact_me_round{
-    border-color:var(--primary);
+.contact_me_round {
+    border-color: var(--primary);
     color: var(--primary);
 }
 
-.contact_me_round:hover{
-   border-color:var(--primary);
-   background: var(--primary);
-   color: var(--secondary);
-   transition: all .4s ease;
+.contact_me_round:hover {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--secondary);
+    transition: all .4s ease;
 }
 
 @media screen and (min-width: 1200px) {
@@ -158,6 +160,7 @@ a, p {
         gap: 0.5rem;
     }
 }
+
 @media screen and (min-width: 1000px) and (max-width: 1199px) {
     .navbar-nav {
         width: 88%;
@@ -246,35 +249,38 @@ a, p {
 }
 
 
-
-
 /**
   Hero Container – particles stay inside via overflow + wrapper
 **/
 
 .hero-container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  max-height: 700px;
-  overflow: hidden;
-  isolation: isolate;
-}
-@media screen and (max-width: 768px) {
-  .hero-container {
+    position: relative;
+    width: 100%;
     height: 100vh;
     max-height: 700px;
-    padding: 0 5%;
-  }
+    overflow: hidden;
+    background-image: conic-gradient(hsl(0 0% 100% / .75) 0 0);
+    background-size: cover;
+    /*isolation: isolate;*/
+    z-index: 100;
 
-  .hero-content {
-    top: -160px;
-    left: 50%;
-    transform: translate(-50%, 50%);
-   }
 }
 
-@media screen and (min-width: 653px) and  (max-width: 768px){
+@media screen and (max-width: 768px) {
+    .hero-container {
+        height: 100vh;
+        max-height: 700px;
+        padding: 0 5%;
+    }
+
+    .hero-content {
+        top: -160px;
+        left: 50%;
+        transform: translate(-50%, 50%);
+    }
+}
+
+@media screen and (min-width: 653px) and  (max-width: 768px) {
     .hero-content {
         top: -100px;
     }
@@ -282,44 +288,45 @@ a, p {
 
 /* Clipping wrapper so the particles canvas cannot escape */
 .hero-particles-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1;
-}
-@media screen and (min-width: 769px){
-.hero-content {
-  position: absolute;
-  top: 15%;
-  left: 50%;
-  transform: translate(-50%, 50%);
-}
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
 }
 
-.hero-content > h1{
-    font-size: clamp(45px,8vw,50px);
+@media screen and (min-width: 769px) {
+    .hero-content {
+        position: absolute;
+        top: 15%;
+        left: 50%;
+        transform: translate(-50%, 50%);
+    }
+}
+
+.hero-content > h1 {
+    font-size: clamp(45px, 8vw, 50px);
     font-weight: 600;
     line-height: 1;
 }
 
-.hero-content > h1 > .hero-name{
+.hero-content > h1 > .hero-name {
     color: var(--primary)
- }
- 
+}
 
-.hero-content > h2{
-    
+
+.hero-content > h2 {
+
     margin-top: 30px;
-    font-size: clamp(35px,5vw,55px);
+    font-size: clamp(35px, 5vw, 55px);
     font-weight: 600;
     line-height: 1;
 }
 
 
-.hero-content > p{
+.hero-content > p {
     margin-top: 30px;
     max-width: 500px;
 }
@@ -331,30 +338,30 @@ a, p {
 
 /* Particles canvas constrained to hero wrapper */
 .hero-container .particles-background {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
-  z-index: 0;
-  pointer-events: none;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .hero-container .particles-background canvas,
 .hero-container #tsparticles canvas {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
-  display: block;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    display: block;
 }
 
 .hero-content {
-  position: relative;
-  z-index: 10;
+    position: relative;
+    z-index: 10;
 }

@@ -24,6 +24,12 @@ export function ThemeProvider({ children }) {
       root.setAttribute('data-bs-theme', 'dark')
     }
 
+    // Update meta theme-color for mobile status bar
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', theme === 'light' ? '#f0f2f5' : '#050505')
+    }
+
     try {
       localStorage.setItem(STORAGE_KEY, theme)
     } catch (_) {}
