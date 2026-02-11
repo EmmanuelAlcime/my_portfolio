@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Particles from "react-particles"
 import { loadSlim } from "tsparticles-slim"
@@ -8,358 +8,419 @@ import inspire_her_image from '@/assets/inspire_her_website.png'
 import cash_n_go_image from '@/assets/cash_n_go_website.png'
 import lacouperetrouvailles_image from '@/assets/lacouperetrouvailles_website.png'
 const recentProjects = [
-  {
-    id: 1,
-    title: "Aliv Business Website",
-    link: "https://alivbusiness.com/",
-    image: aliv_business_image
-  },
-  {
-    id: 2,
-    title: "Inspire Her Conference",
-    link: "https://inspireher.cablebahamas.com/#become-a-sponsor-form",
-    image: inspire_her_image
-  },
-  {
-    id: 3,
-    title: "Cash N' Go Website",
-    link: "https://cashngobahamas.com/",
-    image: cash_n_go_image
-  },
-  {
-    id: 4,
-    title: "L'a Coupe Retrouvaille",
-    link: "https://lacouperetrouvailles.org/",
-    image: lacouperetrouvailles_image
-  }
+    {
+        id: 1,
+        title: "Aliv Business Website",
+        link: "https://alivbusiness.com/",
+        image: aliv_business_image
+    },
+    {
+        id: 2,
+        title: "Inspire Her Conference",
+        link: "https://inspireher.cablebahamas.com/#become-a-sponsor-form",
+        image: inspire_her_image
+    },
+    {
+        id: 3,
+        title: "Cash N' Go Website",
+        link: "https://cashngobahamas.com/",
+        image: cash_n_go_image
+    },
+    {
+        id: 4,
+        title: "L'a Coupe Retrouvaille",
+        link: "https://lacouperetrouvailles.org/",
+        image: lacouperetrouvailles_image
+    }
 ]
 
 const SCROLL_SPEED = 4
 const SCROLL_INTERVAL_MS = 16
+const AUTO_SCROLL_SPEED = 1
+const AUTO_SCROLL_INTERVAL_MS = 50
 
 const Home = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' })
-  const [formStatus, setFormStatus] = useState({ submitted: false, loading: false, error: null })
-  const sliderRef = useRef(null)
-  const scrollIntervalRef = useRef(null)
+    const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' })
+    const [formStatus, setFormStatus] = useState({ submitted: false, loading: false, error: null })
+    const sliderRef = useRef(null)
+    const scrollIntervalRef = useRef(null)
+    const autoScrollIntervalRef = useRef(null)
+    const [isAutoScrolling, setIsAutoScrolling] = useState(true)
+    const [userInteracting, setUserInteracting] = useState(false)
 
-  const stopScroll = () => {
-    if (scrollIntervalRef.current) {
-      clearInterval(scrollIntervalRef.current)
-      scrollIntervalRef.current = null
+    const stopAllScroll = () => {
+        if (scrollIntervalRef.current) {
+            clearInterval(scrollIntervalRef.current)
+            scrollIntervalRef.current = null
+        }
     }
-  }
 
-  const startScroll = (direction) => {
-    stopScroll()
-    scrollIntervalRef.current = setInterval(() => {
-      if (sliderRef.current) {
-        const delta = direction === 'left' ? -SCROLL_SPEED : SCROLL_SPEED
-        sliderRef.current.scrollLeft += delta
-      }
-    }, SCROLL_INTERVAL_MS)
-  }
+    const stopAutoScroll = () => {
+        if (autoScrollIntervalRef.current) {
+            clearInterval(autoScrollIntervalRef.current)
+            autoScrollIntervalRef.current = null
+            setIsAutoScrolling(false)
+        }
+    }
 
-  const particlesInit = useCallback(async (engine) => {
-    await loadSlim(engine)
-  }, [])
+    const startAutoScroll = () => {
+        stopAutoScroll()
+        setIsAutoScrolling(true)
+        autoScrollIntervalRef.current = setInterval(() => {
+            if (sliderRef.current) {
+                const slider = sliderRef.current
+                // Scroll to the right
+                slider.scrollLeft += AUTO_SCROLL_SPEED
 
-  const particlesLoaded = useCallback(async () => {}, [])
+                // Reset to beginning when reaching end
+                if (slider.scrollLeft >= slider.scrollWidth - slider.clientWidth - 10) {
+                    slider.scrollLeft = 0
+                }
+            }
+        }, AUTO_SCROLL_INTERVAL_MS)
+    }
 
-  const scrollToContact = () => {
-    document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' })
-  }
+    const resumeAutoScroll = () => {
+        setTimeout(() => {
+            if (!userInteracting) {
+                startAutoScroll()
+            }
+        }, 3000) // Resume auto-scroll 3 seconds after user stops interacting
+    }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    const stopScroll = () => {
+        stopAllScroll()
+        setUserInteracting(false)
+        resumeAutoScroll()
+    }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setFormStatus({ submitted: false, loading: true, error: null })
+    const startScroll = (direction) => {
+        stopAutoScroll()
+        setUserInteracting(true)
+        stopAllScroll()
+        scrollIntervalRef.current = setInterval(() => {
+            if (sliderRef.current) {
+                const delta = direction === 'left' ? -SCROLL_SPEED : SCROLL_SPEED
+                sliderRef.current.scrollLeft += delta
+            }
+        }, SCROLL_INTERVAL_MS)
+    }
 
-    // Mock sending message with 1.5 second delay
-    setTimeout(() => {
-      setFormStatus({ submitted: true, loading: false, error: null })
-      setFormData({ name: '', email: '', subject: '', message: '' })
-      setTimeout(() => setFormStatus(prev => ({ ...prev, submitted: false })), 5000)
-    }, 1500)
-  }
+    // Start auto-scroll on component mount
+    useEffect(() => {
+        startAutoScroll()
+        return () => {
+            stopAutoScroll()
+            stopAllScroll()
+        }
+    }, [])
 
-  return (
-    <>
-      {/* Hero: particles only inside this section */}
-      <div className="hero-container">
-        <div className="hero-particles-wrapper" aria-hidden="true">
-          <Particles
-            id="tsparticles"
-            init={particlesInit}
-            loaded={particlesLoaded}
-            options={{
-              ...particlesConfig,
-              fullScreen: { enable: false }
-            }}
-            className="particles-background"
-            style={{ width: '100%', height: '100%' }}
-          />
-        </div>
-        <div className="col-md-8 hero-content">
-          <h1>
-            Hey, I'm <span className="hero-name">Emmanuel Alcime.</span>
-          </h1>
-          <h2 className="display-5">I Build Cool <span className="theme-name">Android Apps</span> and <span className="theme-name">Websites</span>.</h2>
-          <p>
-            I'm a software developer with a focus on front-end and back-end web
-            development, cross platform app development, and native Android development.
-          </p>
-          <button type="button" className="contact_me_round btn btn-outline-success hero-button" onClick={scrollToContact}>
-            <span className="contact_me_round__text">Get In Touch</span>
-          </button>
-        </div>
-      </div>
+    const particlesInit = useCallback(async (engine) => {
+        await loadSlim(engine)
+    }, [])
 
-      {/* Recent Projects – horizontal thumbnail slider */}
-      <section className="home-section recent-projects-section" style={carouselStyle}>
-        <div className="container py-5">
-          <h2 className="home-section-heading">Recent <span className="theme-name">Projects</span>  </h2>
-          <div className="recent-projects-slider-wrap">
-            <button
-              type="button"
-              className="recent-projects-arrow recent-projects-arrow-left"
-              aria-label="Scroll left"
-              onMouseEnter={() => startScroll('left')}
-              onMouseLeave={stopScroll}
-            >
-              <i className="fas fa-chevron-left" />
-            </button>
-            <div className="recent-projects-slider" ref={sliderRef}>
-              {recentProjects.map((proj) => (
-                <a
-                  key={proj.id}
-                  href={proj.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="recent-project-thumb"
-                >
-                  <img src={proj.image} alt={proj.title} className="recent-project-thumb-img" loading="lazy" />
-                  <span className="recent-project-thumb-title">{proj.title}</span>
-                </a>
-              ))}
-            </div>
-           
-            <button
-              type="button"
-              className="recent-projects-arrow recent-projects-arrow-right"
-              aria-label="Scroll right"
-              onMouseEnter={() => startScroll('right')}
-              onMouseLeave={stopScroll}
-            >
-              <i className="fas fa-chevron-right" />
-            </button>
-          </div>
-          <div className="text-center mt-4">
-            <Link to="/my_portfolio/projects" className="btn btn-outline-primary">View All Projects</Link>
-          </div>
-        </div>
-      </section>
+    const particlesLoaded = useCallback(async () => {}, [])
 
-      {/* My Contributions Section */}
-      <section className="home-section contributions-section" style={contributionsStyle}>
-        <div className="container py-5">
-          <h2 className="home-section-heading">My <span className="theme-name">Contributions</span></h2>
-          
-          <div className="contributions-grid">
-            {/* Government Projects */}
-            <div className="contributions-category">
-              <div className="category-header">
-                <div className="category-icon">
-                  <i className="fas fa-building"></i>
+    const scrollToContact = () => {
+        document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' })
+    }
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setFormData(prev => ({ ...prev, [name]: value }))
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setFormStatus({ submitted: false, loading: true, error: null })
+
+        // Mock sending message with 1.5 second delay
+        setTimeout(() => {
+            setFormStatus({ submitted: true, loading: false, error: null })
+            setFormData({ name: '', email: '', subject: '', message: '' })
+            setTimeout(() => setFormStatus(prev => ({ ...prev, submitted: false })), 5000)
+        }, 1500)
+    }
+
+    return (
+        <>
+            {/* Hero: particles only inside this section */}
+            <div className="hero-container">
+                <div className="hero-particles-wrapper" aria-hidden="true">
+                    <Particles
+                        id="tsparticles"
+                        init={particlesInit}
+                        loaded={particlesLoaded}
+                        options={{
+                            ...particlesConfig,
+                            fullScreen: { enable: false }
+                        }}
+                        className="particles-background"
+                        style={{ width: '100%', height: '100%' }}
+                    />
                 </div>
-                <h3>Government Digital Transformation Unit</h3>
-                <p className="category-subtitle">Part of the DTU Dev Team</p>
-              </div>
-              
-              <div className="contributions-cards">
-                <div className="contribution-card">
-                  <div className="card-header">
-                    <i className="fas fa-certificate"></i>
-                    <h4>CertifiedPros</h4>
-                  </div>
-                  <p className="card-description">
-                    Professional certification and credential verification platform for government professionals. Built secure authentication and role-based access systems.
-                  </p>
-                  <div className="contribution-tags">
-                    <span className="contrib-tag">React</span>
-                    <span className="contrib-tag">Laravel</span>
-                    <span className="contrib-tag">InertiaJS</span>       
-                  </div>
+                <div className="col-md-8 hero-content">
+                    <h1>
+                        Hey, I'm <span className="hero-name">Emmanuel Alcime.</span>
+                    </h1>
+                    <h2 className="display-5">I Build Cool <span className="theme-name">Android Apps</span> and <span className="theme-name">Websites</span>.</h2>
+                    <p>
+                        I'm a software developer with a focus on front-end and back-end web
+                        development, cross platform app development, and native Android development.
+                    </p>
+                    <button type="button" className="contact_me_round btn btn-outline-success hero-button" onClick={scrollToContact}>
+                        <span className="contact_me_round__text">Get In Touch</span>
+                    </button>
                 </div>
-
-                <div className="contribution-card">
-                  <div className="card-header">
-                    <i className="fas fa-book"></i>
-                    <h4>Policy Registry</h4>
-                  </div>
-                  <p className="card-description">
-                    Comprehensive government insurance policies registration and management system. Implemented advanced search, versioning, and approval workflows.
-                  </p>
-                  <div className="contribution-tags">
-                    <span className="contrib-tag">HTML5</span>
-                    <span className="contrib-tag">MySQL</span>
-                    <span className="contrib-tag">CSS3</span>
-                    <span className="contrib-tag">JavaScript</span>
-                    <span className="contrib-tag">PHP</span>
-                  </div>
-                </div>
-
-                <div className="contribution-card">
-                  <div className="card-header">
-                    <i className="fas fa-landmark"></i>
-                    <h4>B.T.A.G Website</h4>
-                  </div>
-                  <p className="card-description">
-                    Government agency website with public information portal. Developed responsive design with government compliance standards and accessibility features.
-                  </p>
-                  <div className="contribution-tags">
-                    <span className="contrib-tag">React</span>
-                    <span className="contrib-tag">Laravel</span>
-                    {/* <span className="contrib-tag">Accessibility</span> */}
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* Private Sector Updates */}
-            <div className="contributions-category">
-              <div className="category-header">
-                <div className="category-icon">
-                  <i className="fas fa-rocket"></i>
+            {/* Recent Projects – horizontal thumbnail slider */}
+            <section className="home-section recent-projects-section" style={carouselStyle}>
+                <div className="container py-5">
+                    <h2 className="home-section-heading">Recent <span className="theme-name">Projects</span>  </h2>
+                    <div className="recent-projects-slider-wrap">
+                        <button
+                            type="button"
+                            className="recent-projects-arrow recent-projects-arrow-left"
+                            aria-label="Scroll left"
+                            onMouseEnter={() => startScroll('left')}
+                            onMouseLeave={stopScroll}
+                            onTouchStart={() => startScroll('left')}
+                            onTouchEnd={stopScroll}
+                            onClick={() => startScroll('left')}
+                        >
+                            <i className="fas fa-chevron-left" />
+                        </button>
+                        <div className="recent-projects-slider" ref={sliderRef}>
+                            {recentProjects.map((proj) => (
+                                <a
+                                    key={proj.id}
+                                    href={proj.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="recent-project-thumb"
+                                >
+                                    <img src={proj.image} alt={proj.title} className="recent-project-thumb-img" loading="lazy" />
+                                    <span className="recent-project-thumb-title">{proj.title}</span>
+                                </a>
+                            ))}
+                        </div>
+
+                        <button
+                            type="button"
+                            className="recent-projects-arrow recent-projects-arrow-right"
+                            aria-label="Scroll right"
+                            onMouseEnter={() => startScroll('right')}
+                            onMouseLeave={stopScroll}
+                            onTouchStart={() => startScroll('right')}
+                            onTouchEnd={stopScroll}
+                            onClick={() => startScroll('right')}
+                        >
+                            <i className="fas fa-chevron-right" />
+                        </button>
+                    </div>
+                    <div className="text-center mt-4">
+                        <Link to="/my_portfolio/projects" className="btn btn-outline-primary">View All Projects</Link>
+                    </div>
                 </div>
-                <h3>Private Sector Updates & Improvements</h3>
-                <p className="category-subtitle">Product Development & Enhancement</p>
-              </div>
-              
-              <div className="contributions-cards">
-                <div className="contribution-card">
-                  <div className="card-header">
-                    <i className="fas fa-mobile-alt"></i>
-                    <h4>Be aliv Website Updates</h4>
-                  </div>
-                  <p className="card-description">
-                  Aliv Mobile's main website.
-                  </p>
-                  <div className="contribution-tags">
-                    <span className="contrib-tag">WordPress</span>
-                    {/* <span className="contrib-tag">Performance</span>
+            </section>
+
+            {/* My Contributions Section */}
+            <section className="home-section contributions-section" style={contributionsStyle}>
+                <div className="container py-5">
+                    <h2 className="home-section-heading">My <span className="theme-name">Contributions</span></h2>
+
+                    <div className="contributions-grid">
+                        {/* Government Projects */}
+                        <div className="contributions-category">
+                            <div className="category-header">
+                                <div className="category-icon">
+                                    <i className="fas fa-building"></i>
+                                </div>
+                                <h3>Government Digital Transformation Unit</h3>
+                                <p className="category-subtitle">Part of the DTU Dev Team</p>
+                            </div>
+
+                            <div className="contributions-cards">
+                                <div className="contribution-card">
+                                    <div className="card-header">
+                                        <i className="fas fa-certificate"></i>
+                                        <h4>CertifiedPros</h4>
+                                    </div>
+                                    <p className="card-description">
+                                        Professional certification and credential verification platform for government professionals. Built secure authentication and role-based access systems.
+                                    </p>
+                                    <div className="contribution-tags">
+                                        <span className="contrib-tag">React</span>
+                                        <span className="contrib-tag">Laravel</span>
+                                        <span className="contrib-tag">InertiaJS</span>
+                                    </div>
+                                </div>
+
+                                <div className="contribution-card">
+                                    <div className="card-header">
+                                        <i className="fas fa-book"></i>
+                                        <h4>Policy Registry</h4>
+                                    </div>
+                                    <p className="card-description">
+                                        Comprehensive government insurance policies registration and management system. Implemented advanced search, versioning, and approval workflows.
+                                    </p>
+                                    <div className="contribution-tags">
+                                        <span className="contrib-tag">HTML5</span>
+                                        <span className="contrib-tag">MySQL</span>
+                                        <span className="contrib-tag">CSS3</span>
+                                        <span className="contrib-tag">JavaScript</span>
+                                        <span className="contrib-tag">PHP</span>
+                                    </div>
+                                </div>
+
+                                <div className="contribution-card">
+                                    <div className="card-header">
+                                        <i className="fas fa-landmark"></i>
+                                        <h4>B.T.A.G Website</h4>
+                                    </div>
+                                    <p className="card-description">
+                                        Government agency website with public information portal. Developed responsive design with government compliance standards and accessibility features.
+                                    </p>
+                                    <div className="contribution-tags">
+                                        <span className="contrib-tag">React</span>
+                                        <span className="contrib-tag">Laravel</span>
+                                        {/* <span className="contrib-tag">Accessibility</span> */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Private Sector Updates */}
+                        <div className="contributions-category">
+                            <div className="category-header">
+                                <div className="category-icon">
+                                    <i className="fas fa-rocket"></i>
+                                </div>
+                                <h3>Private Sector Updates & Improvements</h3>
+                                <p className="category-subtitle">Product Development & Enhancement</p>
+                            </div>
+
+                            <div className="contributions-cards">
+                                <div className="contribution-card">
+                                    <div className="card-header">
+                                        <i className="fas fa-mobile-alt"></i>
+                                        <h4>Be aliv Website Updates</h4>
+                                    </div>
+                                    <p className="card-description">
+                                        Aliv Mobile's main website.
+                                    </p>
+                                    <div className="contribution-tags">
+                                        <span className="contrib-tag">WordPress</span>
+                                        {/* <span className="contrib-tag">Performance</span>
                     <span className="contrib-tag">UX/UI</span> */}
-                  </div>
-                </div>
+                                    </div>
+                                </div>
 
-                <div className="contribution-card">
-                  <div className="card-header">
-                    <i className="fas fa-sync-alt"></i>
-                    <h4>Rev.bs Website Updates</h4>
-                  </div>
-                  <p className="card-description">
-                  Cable Bahamas main website.
-                  </p>
-                  <div className="contribution-tags">
-                    <span className="contrib-tag">WordPress</span>
-                    {/* <span className="contrib-tag">API</span>
+                                <div className="contribution-card">
+                                    <div className="card-header">
+                                        <i className="fas fa-sync-alt"></i>
+                                        <h4>Rev.bs Website Updates</h4>
+                                    </div>
+                                    <p className="card-description">
+                                        Cable Bahamas main website.
+                                    </p>
+                                    <div className="contribution-tags">
+                                        <span className="contrib-tag">WordPress</span>
+                                        {/* <span className="contrib-tag">API</span>
                     <span className="contrib-tag">DevOps</span> */}
-                  </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="contributions-summary">
+                        <div className="summary-card">
+                            <div className="summary-icon">
+                                <i className="fas fa-code-branch"></i>
+                            </div>
+                            <h5>Collaborative Development</h5>
+                            <p>Worked with cross-functional teams on mission-critical government and enterprise projects</p>
+                        </div>
+                        <div className="summary-card">
+                            <div className="summary-icon">
+                                <i className="fas fa-tasks"></i>
+                            </div>
+                            <h5>Quality Assurance</h5>
+                            <p>Implemented rigorous testing, code reviews, and deployment pipelines for production systems</p>
+                        </div>
+                        <div className="summary-card">
+                            <div className="summary-icon">
+                                <i className="fas fa-lightbulb"></i>
+                            </div>
+                            <h5>Continuous Improvement</h5>
+                            <p>Contributed innovative solutions and technical improvements to existing platforms</p>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
+            </section>
 
-          <div className="contributions-summary">
-            <div className="summary-card">
-              <div className="summary-icon">
-                <i className="fas fa-code-branch"></i>
-              </div>
-              <h5>Collaborative Development</h5>
-              <p>Worked with cross-functional teams on mission-critical government and enterprise projects</p>
-            </div>
-            <div className="summary-card">
-              <div className="summary-icon">
-                <i className="fas fa-tasks"></i>
-              </div>
-              <h5>Quality Assurance</h5>
-              <p>Implemented rigorous testing, code reviews, and deployment pipelines for production systems</p>
-            </div>
-            <div className="summary-card">
-              <div className="summary-icon">
-                <i className="fas fa-lightbulb"></i>
-              </div>
-              <h5>Continuous Improvement</h5>
-              <p>Contributed innovative solutions and technical improvements to existing platforms</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form Section */}
-      <section id="contact-form" className="home-section home-contact-section">
-        <div className="container py-5">
-          <h2 className="home-section-heading">Get <span className="theme-name">In Touch</span></h2>
-          <div className="row justify-content-center">
-            <div className="col-lg-8">
-              <div className="contact-form-wrapper">
-                <h3 className="form-title">Send Me a Message</h3>
-                {formStatus.submitted && (
-                  <div className="alert alert-success">
-                    <i className="fas fa-check-circle" /> Thank you! I'll get back to you soon.
-                  </div>
-                )}
-                {formStatus.error && (
-                  <div className="alert alert-danger">
-                    <i className="fas fa-exclamation-circle" /> {formStatus.error}
-                  </div>
-                )}
-                <form onSubmit={handleSubmit} className="contact-form">
-                  <div className="row">
-                    <div className="col-md-6 mb-4">
-                      <label htmlFor="home-name" className="form-label"><i className="fas fa-user" /> Name</label>
-                      <input type="text" className="form-control form-control-lg" id="home-name" name="name" value={formData.name} onChange={handleChange} placeholder="Your name" required />
+            {/* Contact Form Section */}
+            <section id="contact-form" className="home-section home-contact-section">
+                <div className="container py-5">
+                    <h2 className="home-section-heading">Get <span className="theme-name">In Touch</span></h2>
+                    <div className="row justify-content-center">
+                        <div className="col-lg-8">
+                            <div className="contact-form-wrapper">
+                                <h3 className="form-title">Send Me a Message</h3>
+                                {formStatus.submitted && (
+                                    <div className="alert alert-success">
+                                        <i className="fas fa-check-circle" /> Thank you! I'll get back to you soon.
+                                    </div>
+                                )}
+                                {formStatus.error && (
+                                    <div className="alert alert-danger">
+                                        <i className="fas fa-exclamation-circle" /> {formStatus.error}
+                                    </div>
+                                )}
+                                <form onSubmit={handleSubmit} className="contact-form">
+                                    <div className="row">
+                                        <div className="col-md-6 mb-4">
+                                            <label htmlFor="home-name" className="form-label"><i className="fas fa-user" /> Name</label>
+                                            <input type="text" className="form-control form-control-lg" id="home-name" name="name" value={formData.name} onChange={handleChange} placeholder="Your name" required />
+                                        </div>
+                                        <div className="col-md-6 mb-4">
+                                            <label htmlFor="home-email" className="form-label"><i className="fas fa-envelope" /> Email</label>
+                                            <input type="email" className="form-control form-control-lg" id="home-email" name="email" value={formData.email} onChange={handleChange} placeholder="your@email.com" required />
+                                        </div>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label htmlFor="home-subject" className="form-label"><i className="fas fa-heading" /> Subject</label>
+                                        <input type="text" className="form-control form-control-lg" id="home-subject" name="subject" value={formData.subject} onChange={handleChange} placeholder="What is this about?" required />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label htmlFor="home-message" className="form-label"><i className="fas fa-comment" /> Message</label>
+                                        <textarea className="form-control form-control-lg" id="home-message" name="message" value={formData.message} onChange={handleChange} placeholder="Your message..." rows="5" required />
+                                    </div>
+                                    <button type="submit" className="btn btn-outline-success btn-lg w-100" disabled={formStatus.loading}>
+                                        <i className="fas fa-paper-plane" /> {formStatus.loading ? 'Sending...' : 'Send Message'}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div className="col-md-6 mb-4">
-                      <label htmlFor="home-email" className="form-label"><i className="fas fa-envelope" /> Email</label>
-                      <input type="email" className="form-control form-control-lg" id="home-email" name="email" value={formData.email} onChange={handleChange} placeholder="your@email.com" required />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="home-subject" className="form-label"><i className="fas fa-heading" /> Subject</label>
-                    <input type="text" className="form-control form-control-lg" id="home-subject" name="subject" value={formData.subject} onChange={handleChange} placeholder="What is this about?" required />
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="home-message" className="form-label"><i className="fas fa-comment" /> Message</label>
-                    <textarea className="form-control form-control-lg" id="home-message" name="message" value={formData.message} onChange={handleChange} placeholder="Your message..." rows="5" required />
-                  </div>
-                  <button type="submit" className="btn btn-outline-success btn-lg w-100" disabled={formStatus.loading}>
-                    <i className="fas fa-paper-plane" /> {formStatus.loading ? 'Sending...' : 'Send Message'}
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-          <p className="text-center mt-3">
-            <Link to="/my_portfolio/contact">Go to full Contact page</Link> for more options.
-          </p>
-        </div>
-      </section>
-    </>
-  )
+                    <p className="text-center mt-3">
+                        <Link to="/my_portfolio/contact">Go to full Contact page</Link> for more options.
+                    </p>
+                </div>
+            </section>
+        </>
+    )
 }
 
 
 const carouselStyle = {
-  backgroundColor: 'var(--card-bg)',
+    backgroundColor: 'var(--card-bg)',
 }
 
 const contributionsStyle = {
-  background: 'linear-gradient(135deg, rgba(60, 60, 60, 0.18) 0%, rgba(110, 110, 110, 0.12) 50%, rgba(80, 80, 80, 0.16) 100%)',
+    background: 'linear-gradient(135deg, rgba(60, 60, 60, 0.18) 0%, rgba(110, 110, 110, 0.12) 50%, rgba(80, 80, 80, 0.16) 100%)',
 }
 
 
