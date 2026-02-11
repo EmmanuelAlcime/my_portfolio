@@ -83,14 +83,14 @@
 }
 
 /* Main service cards */
+/* Main service cards */
 .service-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 1.75rem;
-  height: 100%;
-  border-top: 4px solid var(--primary);
-  transition: border-color 0.2s ease, transform 0.2s ease;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    border-top: 4px solid var(--primary);
+    transition: all 0.3s ease;
 }
 
 .service-card:hover {

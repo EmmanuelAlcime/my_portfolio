@@ -4,20 +4,30 @@
     <meta charset="utf-8">
     <title>Page Redirect</title>
     <script>
-        // Capture the path that wasn't found
-        const path = window.location.pathname;
-        const segments = path.split('/').filter(Boolean);
+        // Prevent infinite redirect loop
+        const isRedirecting = sessionStorage.getItem('_redirecting');
 
-        // Remove the repo name from the path
-        // For https://emmanuelalcime.github.io/my_portfolio/about
-        // We want to capture /about
-        const baseUrl = '/my_portfolio';
-        const cleanPath = path.startsWith(baseUrl)
-            ? path.slice(baseUrl.length)
-            : path;
+        if (isRedirecting) {
+            // Clear the flag and stop
+            sessionStorage.removeItem('_redirecting');
+            sessionStorage.removeItem('redirect');
+        } else {
+            // Capture the path that wasn't found
+            const path = window.location.pathname;
+            const baseUrl = '/my_portfolio';
 
-        sessionStorage.setItem('redirect', cleanPath || '/');
-        window.location.href = baseUrl + '/index.html';
+            // Extract the clean path (without baseUrl)
+            const cleanPath = path.startsWith(baseUrl)
+                ? path.slice(baseUrl.length)
+                : path;
+
+            // Don't redirect if we're already at the base path
+            if (path !== baseUrl && path !== baseUrl + '/') {
+                sessionStorage.setItem('_redirecting', 'true');
+                sessionStorage.setItem('redirect', cleanPath || '/');
+                window.location.href = baseUrl + '/';
+            }
+        }
     </script>
 </head>
 <body>

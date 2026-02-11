@@ -39,20 +39,20 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="mobile-web-app-capable" content="yes" />
 
-      <script>
-          // Capture the path that wasn't found
-          const path = window.location.pathname;
-          const segments = path.split('/').filter(Boolean);
+<!--      <script>-->
+<!--          // Capture the path that wasn't found-->
+<!--          const path = window.location.pathname;-->
+<!--          const segments = path.split('/').filter(Boolean);-->
 
-          // Remove the repo name from the path
-          const baseUrl = '/my_portfolio';
-          const cleanPath = path.startsWith(baseUrl)
-              ? path.slice(baseUrl.length)
-              : path;
+<!--          // Remove the repo name from the path-->
+<!--          const baseUrl = '/my_portfolio';-->
+<!--          const cleanPath = path.startsWith(baseUrl)-->
+<!--              ? path.slice(baseUrl.length)-->
+<!--              : path;-->
 
-          sessionStorage.setItem('redirect', cleanPath || '/');
-          window.location.href = baseUrl + '/';
-      </script>
+<!--          sessionStorage.setItem('redirect', cleanPath || '/');-->
+<!--          window.location.href = baseUrl + '/';-->
+<!--      </script>-->
 
     <!-- Set theme-color before page load -->
     <script>
