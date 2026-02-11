@@ -49,7 +49,19 @@ const Home = () => {
     const autoScrollIntervalRef = useRef(null)
     const [isAutoScrolling, setIsAutoScrolling] = useState(true)
     const [userInteracting, setUserInteracting] = useState(false)
-    const totalItemsRef = useRef(recentProjects.length * HOME_DUPLICATE_FACTOR)
+
+    const getItemWidth = useCallback(() => {
+        if (sliderRef.current) {
+            const firstItem = sliderRef.current.querySelector('.recent-project-thumb')
+            if (firstItem) {
+                const itemWidth = firstItem.offsetWidth
+                const itemMargin = parseInt(window.getComputedStyle(firstItem).marginRight) || 0
+                const itemGap = parseInt(window.getComputedStyle(sliderRef.current).gap) || 0
+                return itemWidth + itemMargin + itemGap
+            }
+        }
+        return 0
+    }, [])
 
     const stopAllScroll = () => {
         if (scrollIntervalRef.current) {
@@ -69,23 +81,55 @@ const Home = () => {
     const resetScrollPosition = useCallback(() => {
         if (sliderRef.current) {
             const slider = sliderRef.current
-            // Calculate first item width
-            const firstItem = slider.querySelector('.recent-project-thumb')
-            if (firstItem) {
-                const itemWidth = firstItem.offsetWidth
-                const itemMargin = parseInt(window.getComputedStyle(firstItem).marginRight) || 0
-                const itemGap = parseInt(window.getComputedStyle(slider).gap) || 0
-                const singleItemTotalWidth = itemWidth + itemMargin + itemGap
-
-                // When we reach the end of the first set of duplicated items, jump back to start
-                const firstSetWidth = singleItemTotalWidth * recentProjects.length
-
+            const itemTotalWidth = getItemWidth()
+            if (itemTotalWidth > 0) {
+                const firstSetWidth = itemTotalWidth * recentProjects.length
                 if (slider.scrollLeft >= firstSetWidth * 2) {
                     slider.scrollLeft = 0
                 }
             }
         }
-    }, [])
+    }, [getItemWidth])
+
+    const snapToElement = useCallback((direction) => {
+        if (sliderRef.current) {
+            const slider = sliderRef.current
+            const allItems = slider.querySelectorAll('.recent-project-thumb')
+
+            if (allItems.length === 0) return
+
+            const itemTotalWidth = getItemWidth()
+            if (itemTotalWidth === 0) return
+
+            // Find current visible item index
+            let currentIndex = Math.round(slider.scrollLeft / itemTotalWidth)
+
+            // Calculate next index based on direction
+            let nextIndex = direction === 'right' ? currentIndex + 1 : currentIndex - 1
+
+            // Ensure we don't go out of bounds (wrap around for infinite scroll)
+            const maxIndex = allItems.length - 1
+            if (nextIndex > maxIndex) {
+                nextIndex = 0
+                slider.scrollLeft = 0
+            } else if (nextIndex < 0) {
+                nextIndex = maxIndex
+            }
+
+            const nextElement = allItems[nextIndex]
+
+            if (nextElement) {
+                // Use scrollIntoView for precise positioning
+                nextElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'start'
+                })
+
+                setTimeout(() => resetScrollPosition(), 500)
+            }
+        }
+    }, [getItemWidth, resetScrollPosition])
 
     const startAutoScroll = useCallback(() => {
         stopAutoScroll()
@@ -107,23 +151,13 @@ const Home = () => {
         return () => clearTimeout(timeoutId)
     }, [startAutoScroll])
 
-    const stopScroll = useCallback(() => {
-        stopAllScroll()
-        resumeAutoScroll()
-    }, [resumeAutoScroll])
-
-    const startScroll = useCallback((direction) => {
+    const handleScrollButton = useCallback((direction) => {
         stopAutoScroll()
         stopAllScroll()
         setUserInteracting(true)
-        scrollIntervalRef.current = setInterval(() => {
-            if (sliderRef.current) {
-                const delta = direction === 'left' ? -SCROLL_SPEED : SCROLL_SPEED
-                sliderRef.current.scrollLeft += delta
-                resetScrollPosition()
-            }
-        }, SCROLL_INTERVAL_MS)
-    }, [resetScrollPosition])
+        snapToElement(direction)
+        resumeAutoScroll()
+    }, [snapToElement, resumeAutoScroll])
 
     // Start auto-scroll on component mount
     useEffect(() => {
@@ -202,14 +236,34 @@ const Home = () => {
                             type="button"
                             className="recent-projects-arrow recent-projects-arrow-left"
                             aria-label="Scroll left"
-                            onMouseEnter={() => startScroll('left')}
-                            onMouseLeave={stopScroll}
+                            onMouseEnter={() => {
+                                stopAutoScroll()
+                                setUserInteracting(true)
+                            }}
+                            onMouseLeave={() => {
+                                stopAllScroll()
+                                setUserInteracting(false)
+                                resumeAutoScroll()
+                            }}
+                            onMouseDown={() => {
+                                stopAutoScroll()
+                                stopAllScroll()
+                                scrollIntervalRef.current = setInterval(() => {
+                                    if (sliderRef.current) {
+                                        sliderRef.current.scrollLeft -= SCROLL_SPEED
+                                        resetScrollPosition()
+                                    }
+                                }, SCROLL_INTERVAL_MS)
+                            }}
+                            onMouseUp={() => {
+                                stopAllScroll()
+                                resumeAutoScroll()
+                            }}
+                            onClick={() => handleScrollButton('left')}
                             onPointerDown={(e) => {
                                 e.preventDefault()
-                                startScroll('left')
+                                handleScrollButton('left')
                             }}
-                            onPointerUp={stopScroll}
-                            onPointerLeave={stopScroll}
                         >
                             <i className="fas fa-chevron-left" />
                         </button>
@@ -234,14 +288,34 @@ const Home = () => {
                             type="button"
                             className="recent-projects-arrow recent-projects-arrow-right"
                             aria-label="Scroll right"
-                            onMouseEnter={() => startScroll('right')}
-                            onMouseLeave={stopScroll}
+                            onMouseEnter={() => {
+                                stopAutoScroll()
+                                setUserInteracting(true)
+                            }}
+                            onMouseLeave={() => {
+                                stopAllScroll()
+                                setUserInteracting(false)
+                                resumeAutoScroll()
+                            }}
+                            onMouseDown={() => {
+                                stopAutoScroll()
+                                stopAllScroll()
+                                scrollIntervalRef.current = setInterval(() => {
+                                    if (sliderRef.current) {
+                                        sliderRef.current.scrollLeft += SCROLL_SPEED
+                                        resetScrollPosition()
+                                    }
+                                }, SCROLL_INTERVAL_MS)
+                            }}
+                            onMouseUp={() => {
+                                stopAllScroll()
+                                resumeAutoScroll()
+                            }}
+                            onClick={() => handleScrollButton('right')}
                             onPointerDown={(e) => {
                                 e.preventDefault()
-                                startScroll('right')
+                                handleScrollButton('right')
                             }}
-                            onPointerUp={stopScroll}
-                            onPointerLeave={stopScroll}
                         >
                             <i className="fas fa-chevron-right" />
                         </button>
