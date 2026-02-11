@@ -39,6 +39,8 @@ const SCROLL_INTERVAL_MS = 16
 const AUTO_SCROLL_SPEED = 1
 const AUTO_SCROLL_INTERVAL_MS = 50
 
+const HOME_DUPLICATE_FACTOR = 3 // Duplicate items 3x for smoother infinite scroll
+
 const Home = () => {
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' })
     const [formStatus, setFormStatus] = useState({ submitted: false, loading: false, error: null })
@@ -47,6 +49,7 @@ const Home = () => {
     const autoScrollIntervalRef = useRef(null)
     const [isAutoScrolling, setIsAutoScrolling] = useState(true)
     const [userInteracting, setUserInteracting] = useState(false)
+    const totalItemsRef = useRef(recentProjects.length * HOME_DUPLICATE_FACTOR)
 
     const stopAllScroll = () => {
         if (scrollIntervalRef.current) {
@@ -63,48 +66,64 @@ const Home = () => {
         }
     }
 
-    const startAutoScroll = () => {
+    const resetScrollPosition = useCallback(() => {
+        if (sliderRef.current) {
+            const slider = sliderRef.current
+            // Calculate first item width
+            const firstItem = slider.querySelector('.recent-project-thumb')
+            if (firstItem) {
+                const itemWidth = firstItem.offsetWidth
+                const itemMargin = parseInt(window.getComputedStyle(firstItem).marginRight) || 0
+                const itemGap = parseInt(window.getComputedStyle(slider).gap) || 0
+                const singleItemTotalWidth = itemWidth + itemMargin + itemGap
+
+                // When we reach the end of the first set of duplicated items, jump back to start
+                const firstSetWidth = singleItemTotalWidth * recentProjects.length
+
+                if (slider.scrollLeft >= firstSetWidth * 2) {
+                    slider.scrollLeft = 0
+                }
+            }
+        }
+    }, [])
+
+    const startAutoScroll = useCallback(() => {
         stopAutoScroll()
         setIsAutoScrolling(true)
         autoScrollIntervalRef.current = setInterval(() => {
             if (sliderRef.current) {
                 const slider = sliderRef.current
-                // Scroll to the right
                 slider.scrollLeft += AUTO_SCROLL_SPEED
-
-                // Reset to beginning when reaching end
-                if (slider.scrollLeft >= slider.scrollWidth - slider.clientWidth - 10) {
-                    slider.scrollLeft = 0
-                }
+                resetScrollPosition()
             }
         }, AUTO_SCROLL_INTERVAL_MS)
-    }
+    }, [resetScrollPosition])
 
-    const resumeAutoScroll = () => {
-        setTimeout(() => {
-            if (!userInteracting) {
-                startAutoScroll()
-            }
-        }, 3000) // Resume auto-scroll 3 seconds after user stops interacting
-    }
+    const resumeAutoScroll = useCallback(() => {
+        const timeoutId = setTimeout(() => {
+            setUserInteracting(false)
+            startAutoScroll()
+        }, 3000)
+        return () => clearTimeout(timeoutId)
+    }, [startAutoScroll])
 
-    const stopScroll = () => {
+    const stopScroll = useCallback(() => {
         stopAllScroll()
-        setUserInteracting(false)
         resumeAutoScroll()
-    }
+    }, [resumeAutoScroll])
 
-    const startScroll = (direction) => {
+    const startScroll = useCallback((direction) => {
         stopAutoScroll()
-        setUserInteracting(true)
         stopAllScroll()
+        setUserInteracting(true)
         scrollIntervalRef.current = setInterval(() => {
             if (sliderRef.current) {
                 const delta = direction === 'left' ? -SCROLL_SPEED : SCROLL_SPEED
                 sliderRef.current.scrollLeft += delta
+                resetScrollPosition()
             }
         }, SCROLL_INTERVAL_MS)
-    }
+    }, [resetScrollPosition])
 
     // Start auto-scroll on component mount
     useEffect(() => {
@@ -113,7 +132,7 @@ const Home = () => {
             stopAutoScroll()
             stopAllScroll()
         }
-    }, [])
+    }, [startAutoScroll])
 
     const particlesInit = useCallback(async (engine) => {
         await loadSlim(engine)
@@ -185,25 +204,30 @@ const Home = () => {
                             aria-label="Scroll left"
                             onMouseEnter={() => startScroll('left')}
                             onMouseLeave={stopScroll}
-                            onTouchStart={() => startScroll('left')}
-                            onTouchEnd={stopScroll}
-                            onClick={() => startScroll('left')}
+                            onPointerDown={(e) => {
+                                e.preventDefault()
+                                startScroll('left')
+                            }}
+                            onPointerUp={stopScroll}
+                            onPointerLeave={stopScroll}
                         >
                             <i className="fas fa-chevron-left" />
                         </button>
                         <div className="recent-projects-slider" ref={sliderRef}>
-                            {recentProjects.map((proj) => (
-                                <a
-                                    key={proj.id}
-                                    href={proj.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="recent-project-thumb"
-                                >
-                                    <img src={proj.image} alt={proj.title} className="recent-project-thumb-img" loading="lazy" />
-                                    <span className="recent-project-thumb-title">{proj.title}</span>
-                                </a>
-                            ))}
+                            {Array.from({ length: HOME_DUPLICATE_FACTOR }).map((_, setIndex) =>
+                                recentProjects.map((proj) => (
+                                    <a
+                                        key={`${proj.id}-${setIndex}`}
+                                        href={proj.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="recent-project-thumb"
+                                    >
+                                        <img src={proj.image} alt={proj.title} className="recent-project-thumb-img" loading="lazy" />
+                                        <span className="recent-project-thumb-title">{proj.title}</span>
+                                    </a>
+                                ))
+                            )}
                         </div>
 
                         <button
@@ -212,9 +236,12 @@ const Home = () => {
                             aria-label="Scroll right"
                             onMouseEnter={() => startScroll('right')}
                             onMouseLeave={stopScroll}
-                            onTouchStart={() => startScroll('right')}
-                            onTouchEnd={stopScroll}
-                            onClick={() => startScroll('right')}
+                            onPointerDown={(e) => {
+                                e.preventDefault()
+                                startScroll('right')
+                            }}
+                            onPointerUp={stopScroll}
+                            onPointerLeave={stopScroll}
                         >
                             <i className="fas fa-chevron-right" />
                         </button>
