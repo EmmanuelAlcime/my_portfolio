@@ -11,26 +11,34 @@ const recentProjects = [
     {
         id: 1,
         title: "Aliv Business Website",
+        subtitle: "Telecommunications",
         link: "https://alivbusiness.com/",
-        image: aliv_business_image
+        image: aliv_business_image,
+        technologies: ["React", "Laravel", "MySQL"]
     },
     {
         id: 2,
         title: "Inspire Her Conference",
+        subtitle: "Event platform",
         link: "https://inspireher.cablebahamas.com/#become-a-sponsor-form",
-        image: inspire_her_image
+        image: inspire_her_image,
+        technologies: ["HTML5", "Bootstrap 5", "JavaScript", "PHP"]
     },
     {
         id: 3,
         title: "Cash N' Go Website",
+        subtitle: "Financial services",
         link: "https://cashngobahamas.com/",
-        image: cash_n_go_image
+        image: cash_n_go_image,
+        technologies: ["HTML5", "Bootstrap 5", "JavaScript", "PHP"]
     },
     {
         id: 4,
         title: "L'a Coupe Retrouvaille",
+        subtitle: "Non-profit",
         link: "https://lacouperetrouvailles.org/",
-        image: lacouperetrouvailles_image
+        image: lacouperetrouvailles_image,
+        technologies: ["React", "Laravel", "MySQL"]
     }
 ]
 
@@ -41,18 +49,27 @@ const AUTO_SCROLL_INTERVAL_MS = 50
 
 const HOME_DUPLICATE_FACTOR = 3 // Duplicate items 3x for smoother infinite scroll
 
+/** Ensures image src is an absolute URL - fixes broken images after client-side navigation */
+const toAbsoluteAssetUrl = (url) => {
+    if (!url || typeof url !== 'string') return url
+    if (url.startsWith('http://') || url.startsWith('https://')) return url
+    const base = window.location.origin + (import.meta.env.BASE_URL || '/')
+    return new URL(url, base).href
+}
+
 const Home = () => {
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' })
     const [formStatus, setFormStatus] = useState({ submitted: false, loading: false, error: null })
     const sliderRef = useRef(null)
     const scrollIntervalRef = useRef(null)
     const autoScrollIntervalRef = useRef(null)
-    const [isAutoScrolling, setIsAutoScrolling] = useState(true)
+    const [isAutoScrolling, setIsAutoScrolling] = useState(false)
     const [userInteracting, setUserInteracting] = useState(false)
+    const [scrollProgress, setScrollProgress] = useState(0)
 
     const getItemWidth = useCallback(() => {
         if (sliderRef.current) {
-            const firstItem = sliderRef.current.querySelector('.recent-project-thumb')
+            const firstItem = sliderRef.current.querySelector('.project-slide-card')
             if (firstItem) {
                 const itemWidth = firstItem.offsetWidth
                 const itemMargin = parseInt(window.getComputedStyle(firstItem).marginRight) || 0
@@ -84,8 +101,9 @@ const Home = () => {
             const itemTotalWidth = getItemWidth()
             if (itemTotalWidth > 0) {
                 const firstSetWidth = itemTotalWidth * recentProjects.length
-                if (slider.scrollLeft >= firstSetWidth * 2) {
-                    slider.scrollLeft = 0
+                // Seamless loop: when we pass one full set, jump back to maintain position
+                if (slider.scrollLeft >= firstSetWidth) {
+                    slider.scrollLeft -= firstSetWidth
                 }
             }
         }
@@ -94,7 +112,7 @@ const Home = () => {
     const snapToElement = useCallback((direction) => {
         if (sliderRef.current) {
             const slider = sliderRef.current
-            const allItems = slider.querySelectorAll('.recent-project-thumb')
+            const allItems = slider.querySelectorAll('.project-slide-card')
 
             if (allItems.length === 0) return
 
@@ -159,14 +177,30 @@ const Home = () => {
         resumeAutoScroll()
     }, [snapToElement, resumeAutoScroll])
 
-    // Start auto-scroll on component mount
     useEffect(() => {
-        startAutoScroll()
         return () => {
             stopAutoScroll()
             stopAllScroll()
         }
-    }, [startAutoScroll])
+    }, [])
+
+    // Scroll progress for progress bar
+    useEffect(() => {
+        const el = sliderRef.current
+        if (!el) return
+        const updateProgress = () => {
+            const { scrollLeft, scrollWidth, clientWidth } = el
+            const maxScroll = scrollWidth - clientWidth
+            setScrollProgress(maxScroll <= 0 ? 100 : (scrollLeft / maxScroll) * 100)
+        }
+        updateProgress()
+        el.addEventListener('scroll', updateProgress)
+        window.addEventListener('resize', updateProgress)
+        return () => {
+            el.removeEventListener('scroll', updateProgress)
+            window.removeEventListener('resize', updateProgress)
+        }
+    }, [])
 
     const particlesInit = useCallback(async (engine) => {
         await loadSlim(engine)
@@ -212,249 +246,198 @@ const Home = () => {
                         style={{ width: '100%', height: '100%' }}
                     />
                 </div>
-                <div className="col-md-8 hero-content">
-                    <h1>
-                        Hey, I'm <span className="hero-name">Emmanuel Alcime.</span>
-                    </h1>
-                    <h2 className="display-5">I Build Cool <span className="theme-name">Android Apps</span> and <span className="theme-name">Websites</span>.</h2>
-                    <p>
-                        I'm a software developer with a focus on front-end and back-end web
-                        development, cross platform app development, and native Android development.
-                    </p>
-                    <button type="button" className="contact_me_round btn btn-outline-success hero-button" onClick={scrollToContact}>
-                        <span className="contact_me_round__text">Get In Touch</span>
-                    </button>
+                <div className="hero-content">
+                    <div className="hero-content-inner">
+                        <p className="hero-tagline">Full-stack developer &amp; mobile app builder</p>
+                        <h1 className="hero-title">
+                            Hey, I'm <span className="hero-name">Emmanuel Alcime.</span>
+                        </h1>
+                        <h2 className="hero-headline">I build <span className="theme-name">Android apps</span> and <span className="theme-name">websites</span> that deliver.</h2>
+                        <p className="hero-subtitle">
+                            I'm a software developer focused on front-end and back-end web development,
+                            cross-platform apps, and native Android. Let's build something together.
+                        </p>
+                        <div className="hero-cta-row">
+                            <button type="button" className="hero-btn hero-btn-primary" onClick={scrollToContact}>
+                                Get In Touch
+                            </button>
+                            <Link to="/my_portfolio/projects" className="hero-btn hero-btn-outline">
+                                View My Projects
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Recent Projects – horizontal thumbnail slider */}
-            <section className="home-section recent-projects-section" style={carouselStyle}>
-                <div className="container py-5">
-                    <h2 className="home-section-heading">Recent <span className="theme-name">Projects</span>  </h2>
-                    <div className="recent-projects-slider-wrap">
-                        <button
-                            type="button"
-                            className="recent-projects-arrow recent-projects-arrow-left"
-                            aria-label="Scroll left"
-                            onMouseEnter={() => {
-                                stopAutoScroll()
-                                setUserInteracting(true)
-                            }}
-                            onMouseLeave={() => {
-                                stopAllScroll()
-                                setUserInteracting(false)
-                                resumeAutoScroll()
-                            }}
-                            onMouseDown={() => {
-                                stopAutoScroll()
-                                stopAllScroll()
-                                scrollIntervalRef.current = setInterval(() => {
-                                    if (sliderRef.current) {
-                                        sliderRef.current.scrollLeft -= SCROLL_SPEED
-                                        resetScrollPosition()
-                                    }
-                                }, SCROLL_INTERVAL_MS)
-                            }}
-                            onMouseUp={() => {
-                                stopAllScroll()
-                                resumeAutoScroll()
-                            }}
-                            onClick={() => handleScrollButton('left')}
-                            onPointerDown={(e) => {
-                                e.preventDefault()
-                                handleScrollButton('left')
-                            }}
-                        >
-                            <i className="fas fa-chevron-left" />
-                        </button>
-                        <div className="recent-projects-slider" ref={sliderRef}>
-                            {Array.from({ length: HOME_DUPLICATE_FACTOR }).map((_, setIndex) =>
-                                recentProjects.map((proj) => (
-                                    <a
-                                        key={`${proj.id}-${setIndex}`}
-                                        href={proj.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="recent-project-thumb"
-                                    >
-                                        <img src={proj.image} alt={proj.title} className="recent-project-thumb-img" loading="lazy" />
-                                        <span className="recent-project-thumb-title">{proj.title}</span>
-                                    </a>
-                                ))
-                            )}
+            {/* Recent Projects – reference-style slider with overlay cards */}
+            <section className="home-section recent-projects-section dev-slider" style={carouselStyle}>
+                <div className="container py-5 control-slider">
+                    <h2 className="home-section-heading">Recent <span className="theme-name">Projects</span></h2>
+                    <div className="slide-wrapper scrollbar-hidden" ref={sliderRef}>
+                        {Array.from({ length: HOME_DUPLICATE_FACTOR }).map((_, setIndex) =>
+                            recentProjects.map((proj) => (
+                                <a
+                                    key={`${proj.id}-${setIndex}`}
+                                    href={proj.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="project-slide-card"
+                                >
+                                    <div className="project-slide-card-image-wrap">
+                                        <img src={toAbsoluteAssetUrl(proj.image)} alt={proj.title} className="project-slide-card-img" loading="lazy" />
+                                    </div>
+                                    <div className="project-slide-card-overlay">
+                                        <div className="project-slide-card-gradient" />
+                                        <div className="project-slide-card-info">
+                                            <p className="project-slide-card-title">{proj.title}</p>
+                                            <p className="project-slide-card-subtitle">{proj.subtitle}</p>
+                                            <ul className="project-slide-card-tags">
+                                                {proj.technologies.map((tech, i) => (
+                                                    <li key={i}><span>{tech}</span></li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </a>
+                            ))
+                        )}
+                    </div>
+                    <div className="slide-controls">
+                        <div className="slide-progress-track">
+                            <div className="slide-progress-fill" style={{ width: `${scrollProgress}%` }} />
                         </div>
-
-                        <button
-                            type="button"
-                            className="recent-projects-arrow recent-projects-arrow-right"
-                            aria-label="Scroll right"
-                            onMouseEnter={() => {
-                                stopAutoScroll()
-                                setUserInteracting(true)
-                            }}
-                            onMouseLeave={() => {
-                                stopAllScroll()
-                                setUserInteracting(false)
-                                resumeAutoScroll()
-                            }}
-                            onMouseDown={() => {
-                                stopAutoScroll()
-                                stopAllScroll()
-                                scrollIntervalRef.current = setInterval(() => {
-                                    if (sliderRef.current) {
-                                        sliderRef.current.scrollLeft += SCROLL_SPEED
-                                        resetScrollPosition()
-                                    }
-                                }, SCROLL_INTERVAL_MS)
-                            }}
-                            onMouseUp={() => {
-                                stopAllScroll()
-                                resumeAutoScroll()
-                            }}
-                            onClick={() => handleScrollButton('right')}
-                            onPointerDown={(e) => {
-                                e.preventDefault()
-                                handleScrollButton('right')
-                            }}
-                        >
-                            <i className="fas fa-chevron-right" />
-                        </button>
+                        <div className="slide-controls-buttons">
+                            <button
+                                type="button"
+                                className="slide-control-btn"
+                                aria-label={isAutoScrolling ? 'Pause' : 'Play'}
+                                onClick={() => (isAutoScrolling ? stopAutoScroll() : startAutoScroll())}
+                            >
+                                <i className={`fas fa-${isAutoScrolling ? 'pause' : 'play'}`} />
+                            </button>
+                            <button
+                                type="button"
+                                className="slide-control-btn"
+                                aria-label="Previous slide"
+                                onClick={() => handleScrollButton('left')}
+                            >
+                                <i className="fas fa-chevron-left" />
+                            </button>
+                            <button
+                                type="button"
+                                className="slide-control-btn"
+                                aria-label="Next slide"
+                                onClick={() => handleScrollButton('right')}
+                            >
+                                <i className="fas fa-chevron-right" />
+                            </button>
+                        </div>
                     </div>
                     <div className="text-center mt-4">
-                        <Link to="/my_portfolio/projects" className="btn btn-outline-primary">View All Projects</Link>
+                        <Link to="/projects" className="btn btn-outline-primary">View All Projects</Link>
                     </div>
                 </div>
             </section>
 
-            {/* My Contributions Section */}
-            <section className="home-section contributions-section" style={contributionsStyle}>
+            {/* My Contributions Section – Proxify-style layout */}
+            <section className="home-section contributions-section contributions-proxify" style={contributionsStyle}>
                 <div className="container py-5">
-                    <h2 className="home-section-heading">My <span className="theme-name">Contributions</span></h2>
-
-                    <div className="contributions-grid">
-                        {/* Government Projects */}
-                        <div className="contributions-category">
-                            <div className="category-header">
-                                <div className="category-icon">
-                                    <i className="fas fa-building"></i>
-                                </div>
-                                <h3>Government Digital Transformation Unit</h3>
-                                <p className="category-subtitle">Part of the DTU Dev Team</p>
-                            </div>
-
-                            <div className="contributions-cards">
-                                <div className="contribution-card">
-                                    <div className="card-header">
-                                        <i className="fas fa-certificate"></i>
-                                        <h4>CertifiedPros</h4>
+                    <div className="contributions-proxify-header">
+                        <h2 className="home-section-heading">My <span className="theme-name">Contributions</span></h2>
+                        <p className="contributions-proxify-subtitle">
+                            From government digital transformation to private sector product development.
+                            Building high-quality software that delivers real impact.
+                        </p>
+                    </div>
+                    <div className="contributions-proxify-cards">
+                        <div className="contributions-proxify-row contributions-proxify-row-3">
+                            <a href="https://qa-dev.certifiedpros.gov.bs/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary">
+                                <div className="contribution-proxify-text">
+                                    <div>
+                                        <h3>CertifiedPros</h3>
+                                        <p className="mt-4">Professional certification and credential verification platform for government professionals. Built secure authentication and role-based access systems.</p>
                                     </div>
-                                    <p className="card-description">
-                                        Professional certification and credential verification platform for government professionals. Built secure authentication and role-based access systems.
-                                    </p>
-                                    <div className="contribution-tags">
-                                        <span className="contrib-tag">React</span>
-                                        <span className="contrib-tag">Laravel</span>
-                                        <span className="contrib-tag">InertiaJS</span>
+                                    <div className="contribution-proxify-tags">
+                                        <span>React</span><span>Laravel</span><span>InertiaJS</span>
                                     </div>
                                 </div>
-
-                                <div className="contribution-card">
-                                    <div className="card-header">
-                                        <i className="fas fa-book"></i>
-                                        <h4>Policy Registry</h4>
+                                <div className="contribution-proxify-image">
+                                    <i className="fas fa-certificate" aria-hidden />
+                                </div>
+                            </a>
+                            <a href="https://policyregistry.gov.bs/index.php" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary-muted">
+                                <div className="contribution-proxify-text">
+                                    <div>
+                                        <h3>Policy Registry</h3>
+                                        <p className="mt-4">Comprehensive government insurance policies registration and management system. Implemented advanced search, versioning, and approval workflows.</p>
                                     </div>
-                                    <p className="card-description">
-                                        Comprehensive government insurance policies registration and management system. Implemented advanced search, versioning, and approval workflows.
-                                    </p>
-                                    <div className="contribution-tags">
-                                        <span className="contrib-tag">HTML5</span>
-                                        <span className="contrib-tag">MySQL</span>
-                                        <span className="contrib-tag">CSS3</span>
-                                        <span className="contrib-tag">JavaScript</span>
-                                        <span className="contrib-tag">PHP</span>
+                                    <div className="contribution-proxify-tags">
+                                        <span>HTML5</span><span>MySQL</span><span>PHP</span>
                                     </div>
                                 </div>
-
-                                <div className="contribution-card">
-                                    <div className="card-header">
-                                        <i className="fas fa-landmark"></i>
-                                        <h4>B.T.A.G Website</h4>
+                                <div className="contribution-proxify-image">
+                                    <i className="fas fa-book" aria-hidden />
+                                </div>
+                            </a>
+                            <a href="https://btag.gov.bs/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary-subtle">
+                                <div className="contribution-proxify-text">
+                                    <div>
+                                        <h3>B.T.A.G Website</h3>
+                                        <p className="mt-4">Government agency website with public information portal. Developed responsive design with government compliance standards and accessibility features.</p>
                                     </div>
-                                    <p className="card-description">
-                                        Government agency website with public information portal. Developed responsive design with government compliance standards and accessibility features.
-                                    </p>
-                                    <div className="contribution-tags">
-                                        <span className="contrib-tag">React</span>
-                                        <span className="contrib-tag">Laravel</span>
-                                        {/* <span className="contrib-tag">Accessibility</span> */}
+                                    <div className="contribution-proxify-tags">
+                                        <span>React</span><span>Laravel</span>
                                     </div>
                                 </div>
-                            </div>
+                                <div className="contribution-proxify-image">
+                                    <i className="fas fa-landmark" aria-hidden />
+                                </div>
+                            </a>
                         </div>
-
-                        {/* Private Sector Updates */}
-                        <div className="contributions-category">
-                            <div className="category-header">
-                                <div className="category-icon">
-                                    <i className="fas fa-rocket"></i>
-                                </div>
-                                <h3>Private Sector Updates & Improvements</h3>
-                                <p className="category-subtitle">Product Development & Enhancement</p>
-                            </div>
-
-                            <div className="contributions-cards">
-                                <div className="contribution-card">
-                                    <div className="card-header">
-                                        <i className="fas fa-mobile-alt"></i>
-                                        <h4>Be aliv Website Updates</h4>
+                        <div className="contributions-proxify-row contributions-proxify-row-2">
+                            <a href="https://www.bealiv.com/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary-subtle wide">
+                                <div className="contribution-proxify-text">
+                                    <div>
+                                        <h3>Be aliv Website Updates</h3>
+                                        <p className="mt-4">Aliv Mobile's main website. Product updates and enhancements for the telecommunications provider.</p>
                                     </div>
-                                    <p className="card-description">
-                                        Aliv Mobile's main website.
-                                    </p>
-                                    <div className="contribution-tags">
-                                        <span className="contrib-tag">WordPress</span>
-                                        {/* <span className="contrib-tag">Performance</span>
-                    <span className="contrib-tag">UX/UI</span> */}
+                                    <div className="contribution-proxify-tags">
+                                        <span>WordPress</span>
                                     </div>
                                 </div>
-
-                                <div className="contribution-card">
-                                    <div className="card-header">
-                                        <i className="fas fa-sync-alt"></i>
-                                        <h4>Rev.bs Website Updates</h4>
+                                <div className="contribution-proxify-image">
+                                    <i className="fas fa-mobile-alt" aria-hidden />
+                                </div>
+                            </a>
+                            <a href="https://www.rev.bs/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary wide">
+                                <div className="contribution-proxify-text">
+                                    <div>
+                                        <h3>Rev.bs Website Updates</h3>
+                                        <p className="mt-4">Cable Bahamas main website. Ongoing maintenance and feature improvements.</p>
                                     </div>
-                                    <p className="card-description">
-                                        Cable Bahamas main website.
-                                    </p>
-                                    <div className="contribution-tags">
-                                        <span className="contrib-tag">WordPress</span>
-                                        {/* <span className="contrib-tag">API</span>
-                    <span className="contrib-tag">DevOps</span> */}
+                                    <div className="contribution-proxify-tags">
+                                        <span>WordPress</span>
                                     </div>
                                 </div>
-                            </div>
+                                <div className="contribution-proxify-image">
+                                    <i className="fas fa-sync-alt" aria-hidden />
+                                </div>
+                            </a>
                         </div>
                     </div>
-
                     <div className="contributions-summary">
                         <div className="summary-card">
-                            <div className="summary-icon">
-                                <i className="fas fa-code-branch"></i>
-                            </div>
+                            <div className="summary-icon"><i className="fas fa-code-branch" /></div>
                             <h5>Collaborative Development</h5>
                             <p>Worked with cross-functional teams on mission-critical government and enterprise projects</p>
                         </div>
                         <div className="summary-card">
-                            <div className="summary-icon">
-                                <i className="fas fa-tasks"></i>
-                            </div>
+                            <div className="summary-icon"><i className="fas fa-tasks" /></div>
                             <h5>Quality Assurance</h5>
                             <p>Implemented rigorous testing, code reviews, and deployment pipelines for production systems</p>
                         </div>
                         <div className="summary-card">
-                            <div className="summary-icon">
-                                <i className="fas fa-lightbulb"></i>
-                            </div>
+                            <div className="summary-icon"><i className="fas fa-lightbulb" /></div>
                             <h5>Continuous Improvement</h5>
                             <p>Contributed innovative solutions and technical improvements to existing platforms</p>
                         </div>

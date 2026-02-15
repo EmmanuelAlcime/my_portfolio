@@ -16,7 +16,7 @@ const Projects = () => {
       description: "Comprehensive business telecommunications platform with modern design and advanced functionality. Developed using modern web technologies with focus on user experience and performance.",
       link: "https://alivbusiness.com/",
       image: aliv_business_image,
-      technologies: ["React", "PHP", "Laravel", "MySQL"],
+      technologies: ["HTML5", "Bootstrap 5", "JavaScript", "PHP"],
       category: "Web Development",
       icon: "fas fa-mobile-alt",
       highlights: [
@@ -48,7 +48,7 @@ const Projects = () => {
       description: "Modern financial services platform with secure transaction capabilities. Built with enterprise-grade security and reliability standards.",
       link: "https://cashngobahamas.com/",
       image: cash_n_go_image,
-      technologies: ["PHP", "Laravel", "PostgreSQL", "RESTful API"],
+      technologies: ["HTML5", "Bootstrap 5", "JavaScript", "PHP"],
       category: "Web Development",
       icon: "fas fa-credit-card",
       highlights: [
