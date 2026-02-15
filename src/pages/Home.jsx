@@ -14,7 +14,7 @@ const recentProjects = [
         subtitle: "Telecommunications",
         link: "https://alivbusiness.com/",
         image: aliv_business_image,
-        technologies: ["React", "Laravel", "MySQL"]
+        technologies: ["HTML5", "Bootstrap 5", "JavaScript", "PHP"]
     },
     {
         id: 2,
@@ -66,6 +66,7 @@ const Home = () => {
     const [isAutoScrolling, setIsAutoScrolling] = useState(false)
     const [userInteracting, setUserInteracting] = useState(false)
     const [scrollProgress, setScrollProgress] = useState(0)
+    const [showContactModal, setShowContactModal] = useState(false)
 
     const getItemWidth = useCallback(() => {
         if (sliderRef.current) {
@@ -209,8 +210,16 @@ const Home = () => {
     const particlesLoaded = useCallback(async () => {}, [])
 
     const scrollToContact = () => {
+        setShowContactModal(false)
         document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' })
     }
+
+    useEffect(() => {
+        if (!showContactModal) return
+        const onKeyDown = (e) => { if (e.key === 'Escape') setShowContactModal(false) }
+        document.addEventListener('keydown', onKeyDown)
+        return () => document.removeEventListener('keydown', onKeyDown)
+    }, [showContactModal])
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -258,7 +267,7 @@ const Home = () => {
                             cross-platform apps, and native Android. Let's build something together.
                         </p>
                         <div className="hero-cta-row">
-                            <button type="button" className="hero-btn hero-btn-primary" onClick={scrollToContact}>
+                            <button type="button" className="hero-btn hero-btn-primary" onClick={() => setShowContactModal(true)}>
                                 Get In Touch
                             </button>
                             <Link to="/my_portfolio/projects" className="hero-btn hero-btn-outline">
@@ -268,6 +277,29 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Get In Touch modal */}
+            {showContactModal && (
+                <div className="contact-modal-overlay" onClick={() => setShowContactModal(false)} role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+                    <div className="contact-modal" onClick={(e) => e.stopPropagation()}>
+                        <button type="button" className="contact-modal-close" onClick={() => setShowContactModal(false)} aria-label="Close">
+                            <i className="fas fa-times" />
+                        </button>
+                        <h3 id="contact-modal-title" className="contact-modal-title">Get In Touch</h3>
+                        <p className="contact-modal-subtitle">Choose how you&apos;d like to reach out</p>
+                        <div className="contact-modal-options">
+                            <a href="tel:+12424585919" className="contact-modal-option" onClick={() => setShowContactModal(false)}>
+                                <i className="fas fa-phone" />
+                                <span>Call +1 (242) 458-5919</span>
+                            </a>
+                            <button type="button" className="contact-modal-option" onClick={scrollToContact}>
+                                <i className="fas fa-envelope" />
+                                <span>Send a Message</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Recent Projects – reference-style slider with overlay cards */}
             <section className="home-section recent-projects-section dev-slider" style={carouselStyle}>
