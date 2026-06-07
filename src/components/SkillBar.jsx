@@ -21,13 +21,14 @@ const SkillBar = ({ skill, level, icon }) => {
       { threshold: 0.3 }
     )
 
-    if (skillRef.current) {
-      observer.observe(skillRef.current)
+    const el = skillRef.current
+    if (el) {
+      observer.observe(el)
     }
 
     return () => {
-      if (skillRef.current) {
-        observer.unobserve(skillRef.current)
+      if (el) {
+        observer.unobserve(el)
       }
     }
   }, [level, hasAnimated])

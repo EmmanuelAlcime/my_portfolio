@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import '@/styles/services.css'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
 
 const Services = () => {
   const [selectedService, setSelectedService] = useState(null)
   const location = useLocation()
+  const mainServicesRef = useScrollReveal()
+  const additionalServicesRef = useScrollReveal()
+  const processRef = useScrollReveal()
 
   useEffect(() => {
     const hash = location.hash?.slice(1)
@@ -210,7 +214,7 @@ const Services = () => {
       </section>
 
       {/* Main Services */}
-      <section className="main-services py-5">
+      <section ref={mainServicesRef} className="main-services py-5 fade-in">
         <div className="container">
           <div className="section-header mb-5">
             <h2 className="section-title">Core <span className="theme-name">Services</span></h2>
@@ -274,7 +278,7 @@ const Services = () => {
       </section>
 
       {/* Additional Services */}
-      <section className="additional-services py-5 bg-light">
+      <section ref={additionalServicesRef} className="additional-services py-5 fade-in">
         <div className="container">
           <div className="section-header mb-5">
             <h2 className="section-title">Additional <span className="theme-name">Services</span></h2>
@@ -306,7 +310,7 @@ const Services = () => {
       </section>
 
       {/* Process Section */}
-      <section className="process-section py-5">
+      <section ref={processRef} className="process-section py-5 fade-in">
         <div className="container">
           <div className="section-header mb-5">
             <h2 className="section-title">My <span className="theme-name">Development Process</span></h2>
@@ -332,13 +336,13 @@ const Services = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="services-cta py-5 bg-primary text-white">
+      <section className="services-cta py-5">
         <div className="container text-center">
           <h2 className="cta-title mb-3">Ready to Start Your Project?</h2>
           <p className="cta-subtitle mb-4">
             Let's discuss how I can help bring your ideas to life
           </p>
-          <Link to="/contact" className="btn btn-light btn-lg">
+          <Link to="/my_portfolio/contact" className="btn btn-light btn-lg">
             <i className="fas fa-envelope"></i> Get In Touch
           </Link>
         </div>

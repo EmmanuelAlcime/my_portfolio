@@ -2,14 +2,14 @@ import React from 'react'
 
 const ProjectCard = ({ image, name, link, skills = [] }) => {
   return (
-    <div class="dev-card">
+    <div className="dev-card">
         <img src={image} alt={name}/>
-        <div class="dev-info">
-            <div class="dev-name">{name}</div>
-            <div class="dev-link">{link}</div>
-            <div class="dev-skills">
+        <div className="dev-info">
+            <div className="dev-name">{name}</div>
+            <div className="dev-link">{link}</div>
+            <div className="dev-skills">
                 {skills.map((skill, index) => (
-                    <span class="skill-tag" key={index}>{skill}</span>
+                    <span className="skill-tag" key={index}>{skill}</span>
                 ))}
             </div>
         </div>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
 
 const Resume = () => {
   const skills = [
@@ -126,6 +127,11 @@ const Resume = () => {
     }
   ]
 
+  const summaryRef = useScrollReveal()
+  const experienceRef = useScrollReveal()
+  const skillsRef = useScrollReveal()
+  const achievementsRef = useScrollReveal()
+
   return (
     <div className="resume-container">
       <div className="container py-5">
@@ -148,7 +154,7 @@ const Resume = () => {
         </div>
 
         {/* Professional Summary */}
-        <div className="summary-section mb-5">
+        <div ref={summaryRef} className="summary-section mb-5 fade-in">
           <h2 className="section-title">Professional Summary</h2>
           <div className="summary-card">
             <p>
@@ -162,7 +168,7 @@ const Resume = () => {
         </div>
 
         {/* Professional Experience */}
-        <div className="experience-section mb-5">
+        <div ref={experienceRef} className="experience-section mb-5 fade-in">
           <h2 className="section-title">Professional Experience</h2>
           {experience.map((job, idx) => (
             <div key={idx} className="experience-item mb-4">
@@ -185,7 +191,7 @@ const Resume = () => {
         </div>
 
         {/* Skills */}
-        <div className="skills-section mb-5">
+        <div ref={skillsRef} className="skills-section mb-5 fade-in">
           <h2 className="section-title">Technical Skills</h2>
           <div className="row">
             {skills.map((skillGroup, idx) => (
@@ -204,7 +210,7 @@ const Resume = () => {
         </div>
 
         {/* Key Achievements */}
-        <div className="achievements-section mb-5">
+        <div ref={achievementsRef} className="achievements-section mb-5 fade-in">
           <h2 className="section-title">Key Achievements</h2>
           <div className="row">
             {achievements.map((achievement, idx) => (

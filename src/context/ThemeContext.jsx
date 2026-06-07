@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const ThemeContext = createContext({ theme: 'light', setTheme: () => {} })
@@ -32,7 +33,9 @@ export function ThemeProvider({ children }) {
 
     try {
       localStorage.setItem(STORAGE_KEY, theme)
-    } catch (_) {}
+    } catch {
+      // Storage unavailable
+    }
 
     // Remove transition class after animation completes
     setTimeout(() => {

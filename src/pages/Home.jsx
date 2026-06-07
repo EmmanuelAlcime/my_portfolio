@@ -3,10 +3,16 @@ import { Link } from 'react-router-dom'
 import Particles from "react-particles"
 import { loadSlim } from "tsparticles-slim"
 import particlesConfig from '@/assets/particles.json'
+import profileImage from '@/assets/me.jpeg'
 import aliv_business_image from '@/assets/aliv_business_website.png'
 import inspire_her_image from '@/assets/inspire_her_website.png'
 import cash_n_go_image from '@/assets/cash_n_go_website.png'
 import lacouperetrouvailles_image from '@/assets/lacouperetrouvailles_website.png'
+import TechParallax from "@/components/TechParallax"
+import { useScrollReveal } from '@/hooks/useScrollReveal'
+import { submitContactForm } from '@/services/contactForm'
+
+
 const recentProjects = [
     {
         id: 1,
@@ -42,10 +48,8 @@ const recentProjects = [
     }
 ]
 
-const SCROLL_SPEED = 4
-const SCROLL_INTERVAL_MS = 16
-const AUTO_SCROLL_SPEED = 1
-const AUTO_SCROLL_INTERVAL_MS = 50
+
+const AUTO_SCROLL_SPEED = 0.4
 
 const HOME_DUPLICATE_FACTOR = 3 // Duplicate items 3x for smoother infinite scroll
 
@@ -58,132 +62,142 @@ const toAbsoluteAssetUrl = (url) => {
 }
 
 const Home = () => {
+    const projectsRef = useScrollReveal()
+    const contributionsRef = useScrollReveal()
+    const contactRef = useScrollReveal()
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' })
     const [formStatus, setFormStatus] = useState({ submitted: false, loading: false, error: null })
     const sliderRef = useRef(null)
-    const scrollIntervalRef = useRef(null)
-    const autoScrollIntervalRef = useRef(null)
-    const [isAutoScrolling, setIsAutoScrolling] = useState(false)
-    const [userInteracting, setUserInteracting] = useState(false)
+    const rafRef = useRef(null)
+    const resumeTimeoutRef = useRef(null)
+    const isSnappingRef = useRef(false)
+    const [isAutoScrolling, setIsAutoScrolling] = useState(true)
     const [scrollProgress, setScrollProgress] = useState(0)
     const [showContactModal, setShowContactModal] = useState(false)
 
     const getItemWidth = useCallback(() => {
-        if (sliderRef.current) {
-            const firstItem = sliderRef.current.querySelector('.project-slide-card')
-            if (firstItem) {
-                const itemWidth = firstItem.offsetWidth
-                const itemMargin = parseInt(window.getComputedStyle(firstItem).marginRight) || 0
-                const itemGap = parseInt(window.getComputedStyle(sliderRef.current).gap) || 0
-                return itemWidth + itemMargin + itemGap
-            }
-        }
-        return 0
+        const slider = sliderRef.current
+        if (!slider) return 0
+        const firstItem = slider.querySelector('.project-slide-card')
+        if (!firstItem) return 0
+        const gap = parseFloat(getComputedStyle(slider).gap) || 0
+        return firstItem.getBoundingClientRect().width + gap
     }, [])
 
-    const stopAllScroll = () => {
-        if (scrollIntervalRef.current) {
-            clearInterval(scrollIntervalRef.current)
-            scrollIntervalRef.current = null
-        }
-    }
-
-    const stopAutoScroll = () => {
-        if (autoScrollIntervalRef.current) {
-            clearInterval(autoScrollIntervalRef.current)
-            autoScrollIntervalRef.current = null
-            setIsAutoScrolling(false)
-        }
-    }
-
-    const resetScrollPosition = useCallback(() => {
-        if (sliderRef.current) {
-            const slider = sliderRef.current
-            const itemTotalWidth = getItemWidth()
-            if (itemTotalWidth > 0) {
-                const firstSetWidth = itemTotalWidth * recentProjects.length
-                // Seamless loop: when we pass one full set, jump back to maintain position
-                if (slider.scrollLeft >= firstSetWidth) {
-                    slider.scrollLeft -= firstSetWidth
-                }
-            }
-        }
+    const oneSetWidth = useCallback(() => {
+        return getItemWidth() * recentProjects.length
     }, [getItemWidth])
 
-    const snapToElement = useCallback((direction) => {
-        if (sliderRef.current) {
-            const slider = sliderRef.current
-            const allItems = slider.querySelectorAll('.project-slide-card')
-
-            if (allItems.length === 0) return
-
-            const itemTotalWidth = getItemWidth()
-            if (itemTotalWidth === 0) return
-
-            // Find current visible item index
-            let currentIndex = Math.round(slider.scrollLeft / itemTotalWidth)
-
-            // Calculate next index based on direction
-            let nextIndex = direction === 'right' ? currentIndex + 1 : currentIndex - 1
-
-            // Ensure we don't go out of bounds (wrap around for infinite scroll)
-            const maxIndex = allItems.length - 1
-            if (nextIndex > maxIndex) {
-                nextIndex = 0
-                slider.scrollLeft = 0
-            } else if (nextIndex < 0) {
-                nextIndex = maxIndex
-            }
-
-            const nextElement = allItems[nextIndex]
-
-            if (nextElement) {
-                // Use scrollIntoView for precise positioning
-                nextElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'start'
-                })
-
-                setTimeout(() => resetScrollPosition(), 500)
-            }
+    const resetScrollPosition = useCallback(() => {
+        const slider = sliderRef.current
+        if (!slider || isSnappingRef.current) return
+        const setW = oneSetWidth()
+        if (setW <= 0) return
+        // When we scroll past one full set (the first copy), jump back seamlessly
+        if (slider.scrollLeft >= setW * 2) {
+            slider.scrollLeft -= setW
         }
-    }, [getItemWidth, resetScrollPosition])
+    }, [oneSetWidth])
 
-    const startAutoScroll = useCallback(() => {
-        stopAutoScroll()
-        setIsAutoScrolling(true)
-        autoScrollIntervalRef.current = setInterval(() => {
-            if (sliderRef.current) {
-                const slider = sliderRef.current
-                slider.scrollLeft += AUTO_SCROLL_SPEED
-                resetScrollPosition()
-            }
-        }, AUTO_SCROLL_INTERVAL_MS)
+    const smoothSnapTo = useCallback((targetLeft) => {
+        const slider = sliderRef.current
+        if (!slider) return
+        isSnappingRef.current = true
+        slider.classList.add('snap-active')
+        slider.scrollTo({ left: targetLeft, behavior: 'smooth' })
+        const onScrollEnd = () => {
+            slider.classList.remove('snap-active')
+            isSnappingRef.current = false
+            slider.removeEventListener('scroll', onScrollEnd)
+        }
+        // Use a one-shot scroll listener + fallback timeout
+        slider.addEventListener('scroll', onScrollEnd, { once: true })
+        setTimeout(onScrollEnd, 400)
+    }, [])
+
+    const snapToElement = useCallback((direction) => {
+        const slider = sliderRef.current
+        if (!slider) return
+        const allItems = slider.querySelectorAll('.project-slide-card')
+        if (!allItems.length) return
+        const itemW = getItemWidth()
+        if (itemW <= 0) return
+
+        let currentIndex = Math.round(slider.scrollLeft / itemW)
+        let nextIndex = direction === 'right' ? currentIndex + 1 : currentIndex - 1
+
+        const maxIndex = allItems.length - 1
+        // Clamp and wrap within the visible range (first 2 sets for smooth wrapping)
+        if (nextIndex < 0) nextIndex = 0
+        if (nextIndex > maxIndex) nextIndex = maxIndex
+
+        const targetLeft = nextIndex * itemW
+        smoothSnapTo(targetLeft)
+    }, [getItemWidth, smoothSnapTo])
+
+    const isAutoRef = useRef(false)
+
+    const tick = useCallback(() => {
+        const slider = sliderRef.current
+        if (!slider || !isAutoRef.current) return
+        slider.scrollLeft += AUTO_SCROLL_SPEED
+        resetScrollPosition()
     }, [resetScrollPosition])
 
-    const resumeAutoScroll = useCallback(() => {
-        const timeoutId = setTimeout(() => {
-            setUserInteracting(false)
-            startAutoScroll()
-        }, 3000)
-        return () => clearTimeout(timeoutId)
-    }, [startAutoScroll])
+    const startAutoScroll = useCallback(() => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current)
+        if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
+        setIsAutoScrolling(true)
+        isAutoRef.current = true
+        const loop = () => {
+            tick()
+            if (isAutoRef.current) {
+                rafRef.current = requestAnimationFrame(loop)
+            }
+        }
+        rafRef.current = requestAnimationFrame(loop)
+    }, [tick])
+
+    const beginAutoScrollLoop = useCallback(() => {
+        isAutoRef.current = true
+        const loop = () => {
+            tick()
+            if (isAutoRef.current) {
+                rafRef.current = requestAnimationFrame(loop)
+            }
+        }
+        rafRef.current = requestAnimationFrame(loop)
+    }, [tick])
+
+    const stopAutoScroll = useCallback(() => {
+        setIsAutoScrolling(false)
+        isAutoRef.current = false
+        if (rafRef.current) {
+            cancelAnimationFrame(rafRef.current)
+            rafRef.current = null
+        }
+        if (resumeTimeoutRef.current) {
+            clearTimeout(resumeTimeoutRef.current)
+            resumeTimeoutRef.current = null
+        }
+    }, [])
 
     const handleScrollButton = useCallback((direction) => {
         stopAutoScroll()
-        stopAllScroll()
-        setUserInteracting(true)
         snapToElement(direction)
-        resumeAutoScroll()
-    }, [snapToElement, resumeAutoScroll])
+        // Resume auto-scroll after 4s of inactivity
+        resumeTimeoutRef.current = setTimeout(() => {
+            startAutoScroll()
+        }, 4000)
+    }, [stopAutoScroll, snapToElement, startAutoScroll])
 
+    // Start auto-scroll loop on mount, stop on unmount
     useEffect(() => {
+        beginAutoScrollLoop()
         return () => {
             stopAutoScroll()
-            stopAllScroll()
         }
-    }, [])
+    }, [beginAutoScrollLoop, stopAutoScroll])
 
     // Scroll progress for progress bar
     useEffect(() => {
@@ -195,7 +209,7 @@ const Home = () => {
             setScrollProgress(maxScroll <= 0 ? 100 : (scrollLeft / maxScroll) * 100)
         }
         updateProgress()
-        el.addEventListener('scroll', updateProgress)
+        el.addEventListener('scroll', updateProgress, { passive: true })
         window.addEventListener('resize', updateProgress)
         return () => {
             el.removeEventListener('scroll', updateProgress)
@@ -230,12 +244,14 @@ const Home = () => {
         e.preventDefault()
         setFormStatus({ submitted: false, loading: true, error: null })
 
-        // Mock sending message with 1.5 second delay
-        setTimeout(() => {
+        try {
+            await submitContactForm(formData)
             setFormStatus({ submitted: true, loading: false, error: null })
             setFormData({ name: '', email: '', subject: '', message: '' })
             setTimeout(() => setFormStatus(prev => ({ ...prev, submitted: false })), 5000)
-        }, 1500)
+        } catch (err) {
+            setFormStatus({ submitted: false, loading: false, error: err.message })
+        }
     }
 
     return (
@@ -257,6 +273,9 @@ const Home = () => {
                 </div>
                 <div className="hero-content">
                     <div className="hero-content-inner">
+                        <div className="hero-profile-image-wrapper">
+                            <img src={profileImage} alt="Emmanuel Alcime" className="hero-profile-image" />
+                        </div>
                         <p className="hero-tagline">Full-stack developer &amp; mobile app builder</p>
                         <h1 className="hero-title">
                             Hey, I'm <span className="hero-name">Emmanuel Alcime.</span>
@@ -302,7 +321,7 @@ const Home = () => {
             )}
 
             {/* Recent Projects – reference-style slider with overlay cards */}
-            <section className="home-section recent-projects-section dev-slider" style={carouselStyle}>
+            <section ref={projectsRef} className="home-section recent-projects-section dev-slider fade-in" style={carouselStyle}>
                 <div className="container py-5 control-slider">
                     <h2 className="home-section-heading">Recent <span className="theme-name">Projects</span></h2>
                     <div className="slide-wrapper scrollbar-hidden" ref={sliderRef}>
@@ -366,14 +385,19 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="text-center mt-4">
-                        <Link to="/projects" className="btn btn-outline-primary">View All Projects</Link>
+                        <Link to="/my_portfolio/projects" className="btn btn-outline-primary px-4 py-2 fw-semibold">
+                            View All Projects <i className="fas fa-arrow-right ms-2"></i>
+                        </Link>
                     </div>
                 </div>
             </section>
 
+       
+
             {/* My Contributions Section – Proxify-style layout */}
-            <section className="home-section contributions-section contributions-proxify" style={contributionsStyle}>
+            <section ref={contributionsRef} id="my-contributions" className="home-section contributions-section contributions-proxify fade-in" style={contributionsStyle}>
                 <div className="container py-5">
+
                     <div className="contributions-proxify-header">
                         <h2 className="home-section-heading">My <span className="theme-name">Contributions</span></h2>
                         <p className="contributions-proxify-subtitle">
@@ -381,6 +405,7 @@ const Home = () => {
                             Building high-quality software that delivers real impact.
                         </p>
                     </div>
+                   
                     <div className="contributions-proxify-cards">
                         <div className="contributions-proxify-row contributions-proxify-row-3">
                             <a href="https://qa-dev.certifiedpros.gov.bs/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary">
@@ -425,9 +450,7 @@ const Home = () => {
                                     <i className="fas fa-landmark" aria-hidden />
                                 </div>
                             </a>
-                        </div>
-                        <div className="contributions-proxify-row contributions-proxify-row-2">
-                            <a href="https://www.bealiv.com/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary-subtle wide">
+                            <a href="https://www.bealiv.com/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary-subtle">
                                 <div className="contribution-proxify-text">
                                     <div>
                                         <h3>Be aliv Website Updates</h3>
@@ -441,7 +464,7 @@ const Home = () => {
                                     <i className="fas fa-mobile-alt" aria-hidden />
                                 </div>
                             </a>
-                            <a href="https://www.rev.bs/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary wide">
+                            <a href="https://www.rev.bs/" target="_blank" rel="noopener noreferrer" className="contribution-proxify-card theme-primary">
                                 <div className="contribution-proxify-text">
                                     <div>
                                         <h3>Rev.bs Website Updates</h3>
@@ -456,6 +479,8 @@ const Home = () => {
                                 </div>
                             </a>
                         </div>
+                      
+                    
                     </div>
                     <div className="contributions-summary">
                         <div className="summary-card">
@@ -478,7 +503,7 @@ const Home = () => {
             </section>
 
             {/* Contact Form Section */}
-            <section id="contact-form" className="home-section home-contact-section">
+            <section ref={contactRef} id="contact-form" className="home-section home-contact-section fade-in">
                 <div className="container py-5">
                     <h2 className="home-section-heading">Get <span className="theme-name">In Touch</span></h2>
                     <div className="row justify-content-center">
@@ -515,7 +540,7 @@ const Home = () => {
                                         <textarea className="form-control form-control-lg" id="home-message" name="message" value={formData.message} onChange={handleChange} placeholder="Your message..." rows="5" required />
                                     </div>
                                     <button type="submit" className="btn btn-outline-success btn-lg w-100" disabled={formStatus.loading}>
-                                        <i className="fas fa-paper-plane" /> {formStatus.loading ? 'Sending...' : 'Send Message'}
+                                        {formStatus.loading ? <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" /> Sending...</> : <><i className="fas fa-paper-plane me-2" /> Send Message</>}
                                     </button>
                                 </form>
                             </div>
@@ -536,7 +561,7 @@ const carouselStyle = {
 }
 
 const contributionsStyle = {
-    background: 'linear-gradient(135deg, rgba(60, 60, 60, 0.18) 0%, rgba(110, 110, 110, 0.12) 50%, rgba(80, 80, 80, 0.16) 100%)',
+    background: 'var(--gradient-subtle)',
 }
 
 

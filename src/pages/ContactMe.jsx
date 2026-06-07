@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { submitContactForm } from '@/services/contactForm'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
 
 const ContactMe = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +17,9 @@ const ContactMe = () => {
   })
 
   const [openFaqId, setOpenFaqId] = useState('faq1')
+  const formRef = useScrollReveal()
+  const infoRef = useScrollReveal()
+  const faqRef = useScrollReveal()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -28,14 +33,16 @@ const ContactMe = () => {
     e.preventDefault()
     setFormStatus({ submitted: false, loading: true, error: null })
 
-    // Mock sending message with 1.5 second delay
-    setTimeout(() => {
+    try {
+      await submitContactForm(formData)
       setFormStatus({ submitted: true, loading: false, error: null })
       setFormData({ name: '', email: '', subject: '', message: '' })
       setTimeout(() => {
         setFormStatus({ submitted: false, loading: false, error: null })
       }, 5000)
-    }, 1500)
+    } catch (err) {
+      setFormStatus({ submitted: false, loading: false, error: err.message })
+    }
   }
 
   const toggleFaq = (faqId) => {
@@ -120,7 +127,7 @@ const ContactMe = () => {
 
         <div className="row">
           {/* Contact Form */}
-          <div className="col-lg-8 mb-5 mb-lg-0">
+          <div ref={formRef} className="col-lg-8 mb-5 mb-lg-0 fade-in">
             <div className="contact-form-wrapper">
               <h2 className="form-title">Send Me a Message</h2>
               
@@ -198,14 +205,14 @@ const ContactMe = () => {
                   className="btn btn-outline-success btn-lg w-100"
                   disabled={formStatus.loading}
                 >
-                  <i className="fas fa-paper-plane"></i> {formStatus.loading ? 'Sending...' : 'Send Message'}
+                  {formStatus.loading ? <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" /> Sending...</> : <><i className="fas fa-paper-plane me-2" /> Send Message</>}
                 </button>
               </form>
             </div>
           </div>
 
           {/* Contact Information */}
-          <div className="col-lg-4">
+          <div ref={infoRef} className="col-lg-4 fade-in">
             {/* Direct Contact Methods */}
             <div className="contact-methods mb-5">
               <h3 className="section-title">Contact Information</h3>
@@ -259,7 +266,7 @@ const ContactMe = () => {
         </div>
 
         {/* FAQ Section */}
-        <div className="row mt-5">
+        <div ref={faqRef} className="row mt-5 fade-in">
           <div className="col-12">
             <h2 className="section-title">Frequently Asked Questions</h2>
             <div className="accordion" id="faqAccordion">

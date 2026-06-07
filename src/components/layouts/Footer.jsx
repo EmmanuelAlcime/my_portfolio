@@ -1,89 +1,143 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+
+const navigationLinks = [
+  { to: '/my_portfolio/', label: 'Home' },
+  { to: '/my_portfolio/about', label: 'About Me' },
+  { to: '/my_portfolio/projects', label: 'Projects' },
+  { to: '/my_portfolio/resume', label: 'Resume' },
+  { to: '/my_portfolio/contact', label: 'Contact' },
+]
+
+const serviceLinks = [
+  { to: '/my_portfolio/services#web-development', label: 'Web Development' },
+  { to: '/my_portfolio/services#mobile-development', label: 'Mobile Apps' },
+  { to: '/my_portfolio/services#wordpress-solutions', label: 'WordPress Solutions' },
+  { to: '/my_portfolio/services#consulting', label: 'Consultation' },
+]
+
+const socialLinks = [
+  { href: 'https://www.linkedin.com/in/emmanuel-alcime-564178209/', icon: 'fab fa-linkedin-in', label: 'LinkedIn' },
+  { href: 'https://github.com/EmmanuelAlcime', icon: 'fab fa-github', label: 'GitHub' },
+]
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
+  const [email, setEmail] = useState('')
+  const location = useLocation()
+
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault()
+    if (email) {
+      window.location.href = `/my_portfolio/contact?subject=Newsletter%20Signup&body=I%27d%20like%20to%20subscribe%3A%20${encodeURIComponent(email)}`
+    }
+  }
 
   return (
     <footer className="footer-section">
-      <div className="container py-5">
-        <div className="row mb-5">
-          {/* About Section */}
-          <div className="col-lg-4 col-md-6 mb-4 mb-lg-0">
-            <h5 className="footer-title">Emmanuel Alcime</h5>
+      <div className="footer-gradient-bar" />
+
+      <div className="container">
+        <div className="footer-grid">
+          {/* Brand & Description */}
+          <div className="footer-col footer-brand">
+            <Link to="/my_portfolio/" className="footer-logo">
+              {'<'}
+              <span className="theme-name">EA</span>
+              {' />'}
+            </Link>
             <p className="footer-description">
-              Full Stack Developer passionate about building high-performance web and mobile applications. 
-              Specializing in React, PHP, and Kotlin development.
+              Full Stack Developer passionate about building high-performance web and mobile applications.
             </p>
-            <p className="footer-contact">
-              <strong><i className="fas fa-envelope"></i> Email:</strong> <a href="mailto:emmanuelalcime54@gmail.com">emmanuelalcime54@gmail.com</a>
-              <br />
-              <strong><i className="fas fa-phone"></i> Phone:</strong> <a href="tel:+1-242-458-5919">+1-242-458-5919</a>
-            </p>
+            <div className="footer-contact-list">
+              <a href="mailto:emmanuelalcime54@gmail.com" className="footer-contact-item">
+                <span className="footer-contact-icon"><i className="fas fa-envelope" /></span>
+                <span>emmanuelalcime54@gmail.com</span>
+              </a>
+              <a href="tel:+1-242-458-5919" className="footer-contact-item">
+                <span className="footer-contact-icon"><i className="fas fa-phone" /></span>
+                <span>+1-242-458-5919</span>
+              </a>
+              <span className="footer-contact-item">
+                <span className="footer-contact-icon"><i className="fas fa-map-marker-alt" /></span>
+                <span>Nassau, Bahamas</span>
+              </span>
+            </div>
           </div>
 
           {/* Quick Links */}
-          <div className="col-lg-2 col-md-6 mb-4 mb-lg-0">
-            <h5 className="footer-title"><i className="fas fa-link"></i> Quick Links</h5>
+          <div className="footer-col">
+            <h5 className="footer-title">Quick Links</h5>
             <ul className="footer-links">
-              <li><Link to="/my_portfolio/">Home</Link></li>
-              <li><Link to="/my_portfolio/about">About Me</Link></li>
-              <li><Link to="/my_portfolio/projects">Projects</Link></li>
-              <li><Link to="/my_portfolio/resume">Resume</Link></li>
-              <li><Link to="/my_portfolio/contact">Contact</Link></li>
+              {navigationLinks.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className={location.pathname === link.to ? 'active' : ''}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Services */}
-          <div className="col-lg-2 col-md-6 mb-4 mb-lg-0">
-            <h5 className="footer-title"><i className="fas fa-briefcase"></i> Services</h5>
+          <div className="footer-col">
+            <h5 className="footer-title">Services</h5>
             <ul className="footer-links">
-              <li><Link to="/my_portfolio/services#web-development">Web Development</Link></li>
-              <li><Link to="/my_portfolio/services#mobile-development">Mobile Apps</Link></li>
-              <li><Link to="/my_portfolio/services#wordpress-solutions">WordPress Solutions</Link></li>
-              <li><Link to="/my_portfolio/services#consulting">Consultation</Link></li>
+              {serviceLinks.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to}>{link.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Social Links */}
-          <div className="col-lg-4 col-md-6">
-            <h5 className="footer-title"><i className="fas fa-share-alt"></i> Connect With Me</h5>
+          {/* Connect & Newsletter */}
+          <div className="footer-col footer-connect">
+            <h5 className="footer-title">Connect</h5>
             <div className="footer-socials">
-              <a href="https://www.linkedin.com/in/emmanuel-alcime-564178209/" className="footer-social-icon" title="LinkedIn">
-                <i className="fab fa-linkedin"></i>
-              </a>
-              <a href="https://github.com/EmmanuelAlcime" className="footer-social-icon" title="GitHub">
-                <i className="fab fa-github"></i>
-              </a>
-              {/* <a href="#twitter" className="footer-social-icon" title="Twitter">
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a href="#instagram" className="footer-social-icon" title="Instagram">
-                <i className="fab fa-instagram"></i>
-              </a> */}
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  className="footer-social-icon"
+                  title={social.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i className={social.icon} />
+                </a>
+              ))}
             </div>
-            <p className="footer-description mt-3">
-              Let's connect! Feel free to reach out on any of my social platforms.
-            </p>
+            <p className="footer-newsletter-label">Get in touch</p>
+            <form className="footer-newsletter" onSubmit={handleNewsletterSubmit}>
+              <input
+                type="email"
+                className="footer-newsletter-input"
+                placeholder="Your email..."
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button type="submit" className="footer-newsletter-btn" aria-label="Send">
+                <i className="fas fa-paper-plane" />
+              </button>
+            </form>
           </div>
         </div>
+      </div>
 
-        {/* Divider */}
-        <hr className="footer-divider" />
-
-        {/* Bottom Section */}
-        <div className="row align-items-center">
-          <div className="col-md-6">
-            <p className="footer-bottom">
-              © {currentYear} Emmanuel Alcime. All rights reserved.
+      <div className="footer-bottom-wrapper">
+        <div className="container">
+          <div className="footer-bottom-content">
+            <p className="footer-copyright">
+              &copy; {currentYear} Emmanuel Alcime. All rights reserved.
             </p>
-          </div>
-          <div className="col-md-6 text-md-end">
-            {/* <ul className="footer-bottom-links">
-              <li><a href="#privacy"><i className="fas fa-shield-alt"></i> Privacy Policy</a></li>
-              <li><a href="#terms"><i className="fas fa-file-contract"></i> Terms of Service</a></li>
-              <li><a href="#sitemap"><i className="fas fa-sitemap"></i> Sitemap</a></li>
-            </ul> */}
+            <p className="footer-built-with">
+              Built with <i className="fas fa-heart" /> using React
+            </p>
           </div>
         </div>
       </div>

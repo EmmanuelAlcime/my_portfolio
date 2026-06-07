@@ -1,12 +1,20 @@
 import React from 'react'
 import SkillBar from '@/components/SkillBar'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
+import profileImage from '@/assets/me.jpeg'
 
 const AboutMe = () => {
+  const journeyRef = useScrollReveal()
+  const valuesRef = useScrollReveal()
+
   return (
     <div className="about-container">
       <div className="container py-5">
         <div className="row align-items-center mb-5">
           <div className="col-lg-6 mb-4 mb-lg-0">
+            <div className="about-profile-image-wrapper">
+              <img src={profileImage} alt="Emmanuel Alcime" className="about-profile-image" />
+            </div>
             <h1 className="about-title">About <span className="theme-name">Me</span></h1>
             <p className="about-intro">
               I'm Emmanuel Alcime, a Full Stack Developer with 6+ years of experience building 
@@ -33,7 +41,7 @@ const AboutMe = () => {
           </div>
         </div>
 
-        <div className="row mt-5">
+        <div ref={journeyRef} className="row mt-5 fade-in">
           <div className="col-12 pl-5">
             <h2 className="section-title">Professional <span className="theme-name">Journey</span></h2>
             <div className="timeline">
@@ -76,7 +84,7 @@ const AboutMe = () => {
           </div>
         </div>
 
-        <div className="row mt-5">
+        <div ref={valuesRef} className="row mt-5 fade-in">
           <div className="col-12">
             <h2 className="section-title">What <span className="theme-name">Drives Me</span></h2>
             <div className="row">
