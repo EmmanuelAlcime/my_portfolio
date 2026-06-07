@@ -11,7 +11,7 @@ const AboutMe = () => {
     <div className="about-container">
       <div className="container py-5">
         <div className="row align-items-center mb-5">
-          <div className="col-lg-6 mb-4 mb-lg-0">
+          <div className="col-lg-6 mb-4 mb-lg-0 about-intro-col">
             <div className="about-profile-image-wrapper">
               <img src={profileImage} alt="Emmanuel Alcime" className="about-profile-image" />
             </div>
